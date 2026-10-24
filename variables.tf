@@ -1,0 +1,136 @@
+variable "region" {
+  description = "The AWS region, the same as the region of the provider."
+  type        = string
+}
+
+variable "image_version" {
+  description = "The tag of the Flowrensic image to run, such as 0.5.11."
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "The VPC Flowrensic runs in."
+  type        = string
+}
+
+variable "public_subnet_ids" {
+  description = "Public subnets in at least two zones, for the server and the public load balancers."
+  type        = list(string)
+}
+
+variable "database_subnet_ids" {
+  description = "Subnets in at least two zones, for the database."
+  type        = list(string)
+}
+
+variable "ui_name" {
+  description = "The name people and servers open the UI and API at, such as flowrensic.internal.example.com."
+  type        = string
+}
+
+variable "ingest_name" {
+  description = "The public name CI jobs send their data to, such as flowrensic-ingest.example.com."
+  type        = string
+}
+
+variable "dns_zone" {
+  description = "The public Route 53 zone both names are in, such as example.com."
+  type        = string
+}
+
+variable "envs_parameter" {
+  description = "The name of the SSM SecureString parameter that holds FLOWRENSIC_ENVS."
+  type        = string
+}
+
+variable "name" {
+  description = "The start of every resource name."
+  type        = string
+  default     = "flowrensic"
+}
+
+variable "image" {
+  description = "The Flowrensic image, without the tag."
+  type        = string
+  default     = "flowrensic/flowrensic"
+}
+
+variable "allowed_cidrs" {
+  description = "IP ranges of people that may reach the UI and API, each a CIDR such as an address with /32."
+  type        = list(string)
+  default     = []
+}
+
+variable "allowed_security_group_ids" {
+  description = "Security groups of servers in the VPC that may reach the UI and API."
+  type        = list(string)
+  default     = []
+}
+
+variable "secret_parameters" {
+  description = "More variables of the server, each read from the SSM parameter it names."
+  type        = map(string)
+  default     = {}
+}
+
+variable "s3_endpoint_id" {
+  description = "An S3 gateway endpoint the VPC already has on the route tables of the public subnets. Empty, the module creates one."
+  type        = string
+  default     = ""
+}
+
+variable "monitoring" {
+  description = "Where the server's metrics and the Flowrensic dashboards go: ecs runs Prometheus and Grafana in the cluster, grafana_cloud sends them to a Grafana Cloud you have, none sends them nowhere."
+  type        = string
+  default     = "ecs"
+  validation {
+    condition     = contains(["ecs", "grafana_cloud", "none"], var.monitoring)
+    error_message = "monitoring is one of ecs, grafana_cloud or none."
+  }
+}
+
+variable "grafana_admin_password_parameter" {
+  description = "With monitoring ecs: the SSM SecureString parameter that holds the password of the Grafana user admin."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.monitoring != "ecs" || var.grafana_admin_password_parameter != ""
+    error_message = "monitoring ecs needs grafana_admin_password_parameter, the SSM parameter that holds the Grafana admin password."
+  }
+}
+
+variable "grafana_cloud_prometheus_url" {
+  description = "With monitoring grafana_cloud: the Prometheus remote write URL of the Grafana Cloud stack, ending in /api/prom/push."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.monitoring != "grafana_cloud" || var.grafana_cloud_prometheus_url != ""
+    error_message = "monitoring grafana_cloud needs grafana_cloud_prometheus_url, the Prometheus remote write URL of the stack."
+  }
+}
+
+variable "grafana_cloud_prometheus_user" {
+  description = "With monitoring grafana_cloud: the user of the Prometheus of the stack, a number."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.monitoring != "grafana_cloud" || var.grafana_cloud_prometheus_user != ""
+    error_message = "monitoring grafana_cloud needs grafana_cloud_prometheus_user, the user of the Prometheus of the stack."
+  }
+}
+
+variable "grafana_cloud_token_parameter" {
+  description = "With monitoring grafana_cloud: the SSM SecureString parameter that holds a Grafana Cloud token that can write metrics."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.monitoring != "grafana_cloud" || var.grafana_cloud_token_parameter != ""
+    error_message = "monitoring grafana_cloud needs grafana_cloud_token_parameter, the SSM parameter that holds the token that writes metrics."
+  }
+}
+
+variable "grafana_cloud_folder" {
+  description = "With monitoring grafana_cloud: the folder the dashboards go in."
+  type        = string
+  default     = "Flowrensic"
+}

@@ -1,0 +1,71 @@
+# A root module that uses the Flowrensic module. Copy it into your own repo
+# and put your own values in.
+
+terraform {
+  required_version = ">= 1.11"
+  required_providers {
+    aws     = { source = "hashicorp/aws", version = ">= 6.0" }
+    grafana = { source = "grafana/grafana", version = ">= 4.50" }
+  }
+  # Keep the state in your own backend, such as an S3 bucket.
+}
+
+provider "aws" {
+  region = "eu-west-1"
+}
+
+# Used only with monitoring grafana_cloud: the URL of your Grafana Cloud stack.
+# The token comes from GRAFANA_AUTH when terraform runs, so it is not in the state.
+provider "grafana" {
+  url = "https://example.grafana.net"
+}
+
+module "flowrensic" {
+  source  = "flowrensic/flowrensic/aws"
+  version = "0.6.4"
+
+  region              = "eu-west-1"
+  image_version       = "0.6.4"
+  vpc_id              = "vpc-REPLACE"
+  public_subnet_ids   = ["subnet-PUBLIC-A", "subnet-PUBLIC-B"]
+  database_subnet_ids = ["subnet-PRIVATE-A", "subnet-PRIVATE-B"]
+  ui_name             = "flowrensic.internal.example.com"
+  ingest_name         = "flowrensic-ingest.example.com"
+  dns_zone            = "example.com"
+  envs_parameter      = "/flowrensic/envs"
+
+  # People, by IP range, and servers in the same VPC, by security group.
+  allowed_cidrs              = ["192.0.2.10/32"]
+  allowed_security_group_ids = ["sg-REPLACE"]
+
+  # A Temporal Cloud key read through apiKeyVariable in the env list.
+  secret_parameters = {
+    TEMPORAL_CLOUD_API_KEY = "/flowrensic/temporal-cloud-api-key"
+  }
+
+  # Prometheus and Grafana in the cluster, at grafana. and ui_name.
+  monitoring                       = "ecs"
+  grafana_admin_password_parameter = "/flowrensic/grafana-admin-password"
+
+  # Or a Grafana Cloud you already have:
+  # monitoring                    = "grafana_cloud"
+  # grafana_cloud_prometheus_url  = "https://prometheus-prod-01-eu-west-0.grafana.net/api/prom/push"
+  # grafana_cloud_prometheus_user = "123456"
+  # grafana_cloud_token_parameter = "/flowrensic/grafana-cloud-token"
+}
+
+output "ui_url" {
+  value = module.flowrensic.ui_url
+}
+
+output "ingest_url" {
+  value = module.flowrensic.ingest_url
+}
+
+output "grafana_url" {
+  value = module.flowrensic.grafana_url
+}
+
+output "restart" {
+  value = "put-secrets.sh --region eu-west-1 --restart ${module.flowrensic.cluster} ${module.flowrensic.service} .flowrensic-aws-secrets.env"
+}
