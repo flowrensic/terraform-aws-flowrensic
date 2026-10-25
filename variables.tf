@@ -55,6 +55,18 @@ variable "image" {
   default     = "flowrensic/flowrensic"
 }
 
+variable "server_cpu" {
+  description = "The CPU units of the server task: 1024 is one vCPU. Fargate allows 256, 512, 1024, 2048, 4096, 8192 and 16384."
+  type        = number
+  default     = 512
+}
+
+variable "server_memory" {
+  description = "The memory of the server task in MiB. Fargate allows only some sizes for each server_cpu, 2048 to 8192 for 1024."
+  type        = number
+  default     = 1024
+}
+
 variable "allowed_cidrs" {
   description = "IP ranges of people that may reach the UI and API, each a CIDR such as an address with /32."
   type        = list(string)

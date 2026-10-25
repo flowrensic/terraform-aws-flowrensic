@@ -6,8 +6,8 @@ resource "aws_ecs_task_definition" "server" {
   family                   = var.name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "512"
-  memory                   = "1024"
+  cpu                      = tostring(var.server_cpu)
+  memory                   = tostring(var.server_memory)
   execution_role_arn       = aws_iam_role.execution.arn
   task_role_arn            = aws_iam_role.task.arn
 

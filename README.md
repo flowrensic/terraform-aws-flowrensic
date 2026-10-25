@@ -71,6 +71,10 @@ With a default:
 - image: flowrensic/flowrensic.
 - server_subnet_ids: private subnets for the server, empty by default. See
   Networking below.
+- server_cpu and server_memory: the size of the server task, 512 and 1024 by
+  default, which is 0.5 vCPU and 1 GB. Fargate allows only some pairs: one vCPU,
+  1024, needs at least 2048 of memory. A server that pulls many histories needs
+  more CPU.
 - allowed_cidrs: the IP ranges of people that may open the UI and API.
 - allowed_security_group_ids: the security groups of servers in the same VPC that
   may call the UI and API. Inside the VPC, ui_name points at the internal load balancer.
