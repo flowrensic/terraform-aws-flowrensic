@@ -61,6 +61,12 @@ variable "allowed_cidrs" {
   default     = []
 }
 
+variable "server_subnet_ids" {
+  description = "Private subnets for the server and the monitoring task, which then get no public IP. The VPC must route them to the internet, such as through a NAT. Empty runs them in public_subnet_ids with a public IP."
+  type        = list(string)
+  default     = []
+}
+
 variable "allowed_security_group_ids" {
   description = "Security groups of servers in the VPC that may reach the UI and API."
   type        = list(string)

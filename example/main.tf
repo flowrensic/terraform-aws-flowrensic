@@ -24,17 +24,20 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.10"
+  version = "0.6.11"
 
   region              = "eu-west-1"
   image_version       = "0.6.4"
   vpc_id              = "vpc-REPLACE"
   public_subnet_ids   = ["subnet-PUBLIC-A", "subnet-PUBLIC-B"]
   database_subnet_ids = ["subnet-PRIVATE-A", "subnet-PRIVATE-B"]
-  ui_name             = "flowrensic.internal.example.com"
-  ingest_name         = "flowrensic-ingest.example.com"
-  dns_zone            = "example.com"
-  envs_parameter      = "/flowrensic/envs"
+
+  # When the VPC has a NAT, the server can run in private subnets with no public IP.
+  # server_subnet_ids = ["subnet-PRIVATE-A", "subnet-PRIVATE-B"]
+  ui_name        = "flowrensic.internal.example.com"
+  ingest_name    = "flowrensic-ingest.example.com"
+  dns_zone       = "example.com"
+  envs_parameter = "/flowrensic/envs"
 
   # People, by IP range, and servers in the same VPC, by security group.
   allowed_cidrs              = ["192.0.2.10/32"]

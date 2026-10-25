@@ -65,9 +65,9 @@ resource "aws_ecs_service" "server" {
   wait_for_steady_state              = true
 
   network_configuration {
-    subnets          = var.public_subnet_ids
+    subnets          = local.task_subnet_ids
     security_groups  = [aws_security_group.server.id]
-    assign_public_ip = true
+    assign_public_ip = local.assign_public_ip
   }
 
   dynamic "load_balancer" {

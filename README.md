@@ -16,7 +16,7 @@ load balancers you already have. See Your own load balancers below.
 - Prometheus and Grafana with the Flowrensic dashboards, or the dashboards in a
   Grafana Cloud you have, or no monitoring, as the setting monitoring says
 
-It creates no VPC and no NAT. Your settings and your Terraform state stay in your
+It creates no VPC, no NAT and no VPC endpoint. See Networking below. Your settings and your Terraform state stay in your
 own repo. The folder example holds a root module that uses this one.
 
 The module is on the Terraform Registry. In your root module:
@@ -57,9 +57,8 @@ Needed:
 - region: the AWS region, the same as your provider's.
 - image_version: the tag of flowrensic/flowrensic to run.
 - vpc_id: the VPC to run in.
-- public_subnet_ids: public subnets in two zones. The server and the public load
-  balancers run there. The server has a public IP to pull its image and reach
-  Temporal Cloud, and its security group lets nothing in from the internet.
+- public_subnet_ids: public subnets in two zones. The public load balancers run
+  there, and the server too unless you set server_subnet_ids.
 - database_subnet_ids: subnets in two zones for the database.
 - ui_name: the name of the UI and API, such as flowrensic.internal.example.com.
 - ingest_name: the public name CI jobs send to, such as flowrensic-ingest.example.com.
@@ -70,6 +69,8 @@ With a default:
 
 - name: the start of every resource name, flowrensic.
 - image: flowrensic/flowrensic.
+- server_subnet_ids: private subnets for the server, empty by default. See
+  Networking below.
 - allowed_cidrs: the IP ranges of people that may open the UI and API.
 - allowed_security_group_ids: the security groups of servers in the same VPC that
   may call the UI and API. Inside the VPC, ui_name points at the internal load balancer.
@@ -87,6 +88,24 @@ With a default:
   you have, for the ingest. Empty by default.
 - internal_listener_arn: the HTTPS listener on 443 of an internal load balancer you
   have, for the UI and API. Empty by default.
+
+## Networking
+
+The server needs to reach Docker Hub for its image, SSM, Secrets Manager,
+CloudWatch Logs, S3 and Temporal Cloud. The module creates no NAT and no VPC
+endpoint, and does not change your route tables. You pick one of two ways.
+
+- No NAT, the default. Leave server_subnet_ids empty. The server runs in
+  public_subnet_ids with a public IP and goes out through the internet gateway of
+  the VPC. Its security group lets nothing in from the internet.
+- A NAT you already have. Set server_subnet_ids to private subnets in two zones
+  whose route table sends traffic to the internet through that NAT. The server
+  runs there with no public IP. The module does not check the routes, so a subnet
+  with no way out leaves the server unable to pull its image.
+
+Either way the load balancers stay in public_subnet_ids and the database in
+database_subnet_ids. With monitoring ecs, the Prometheus and Grafana task runs in
+the same subnets as the server, the same way, and so do its EFS mount targets.
 
 ## Your own load balancers
 

@@ -162,9 +162,9 @@ resource "aws_efs_file_system" "prometheus" {
 }
 
 resource "aws_efs_mount_target" "prometheus" {
-  count           = local.monitoring_ecs * length(var.public_subnet_ids)
+  count           = local.monitoring_ecs * length(local.task_subnet_ids)
   file_system_id  = aws_efs_file_system.prometheus[0].id
-  subnet_id       = var.public_subnet_ids[count.index]
+  subnet_id       = local.task_subnet_ids[count.index]
   security_groups = [aws_security_group.efs[0].id]
 }
 
@@ -422,9 +422,9 @@ resource "aws_ecs_service" "monitoring" {
   wait_for_steady_state              = true
 
   network_configuration {
-    subnets          = var.public_subnet_ids
+    subnets          = local.task_subnet_ids
     security_groups  = [aws_security_group.monitoring[0].id]
-    assign_public_ip = true
+    assign_public_ip = local.assign_public_ip
   }
 
   dynamic "load_balancer" {

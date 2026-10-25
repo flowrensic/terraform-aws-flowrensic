@@ -22,6 +22,10 @@ locals {
   own_ingest     = 1 - local.reuse_public
   own_internal   = local.reuse_internal == 0 && length(var.allowed_security_group_ids) > 0 ? 1 : 0
   internal       = max(local.own_internal, local.reuse_internal)
+
+  # Where the server and the monitoring task run, and whether they get a public IP.
+  task_subnet_ids  = length(var.server_subnet_ids) > 0 ? var.server_subnet_ids : var.public_subnet_ids
+  assign_public_ip = length(var.server_subnet_ids) == 0
 }
 
 resource "aws_cloudwatch_log_group" "server" {
