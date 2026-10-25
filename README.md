@@ -129,9 +129,10 @@ With monitoring grafana_cloud, a small Prometheus in agent mode runs beside the
 server, scrapes it, and sends what it scrapes to your Grafana Cloud, with the label
 flowrensic_deploy set to name. The module also puts the three dashboards into the
 folder grafana_cloud_folder of that Grafana. For that your root module configures
-the grafana provider with the URL of your stack, and terraform runs with a service
-account token that can write dashboards in GRAFANA_AUTH. That token is not kept in
-the state. The token that writes metrics goes into SSM with put-secrets.sh, like
+the grafana provider with the URL of your stack and its ID in stack_id, and terraform runs with a service
+account token in GRAFANA_AUTH. The service account needs the Admin role: with Editor,
+Grafana lets it create the folder but not read it back, and the apply fails. That
+token is not kept in the state. The token that writes metrics goes into SSM with put-secrets.sh, like
 the other keys. The dashboards add up every series of job flowrensic, so one Grafana
 Cloud stack takes one Flowrensic deploy.
 

@@ -14,15 +14,17 @@ provider "aws" {
   region = "eu-west-1"
 }
 
-# Used only with monitoring grafana_cloud: the URL of your Grafana Cloud stack.
+# Used only with monitoring grafana_cloud: the URL and ID of your Grafana Cloud stack.
+# Without stack_id, Grafana Cloud refuses the dashboards with 403.
 # The token comes from GRAFANA_AUTH when terraform runs, so it is not in the state.
 provider "grafana" {
-  url = "https://example.grafana.net"
+  url      = "https://example.grafana.net"
+  stack_id = 123456
 }
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.9"
+  version = "0.6.10"
 
   region              = "eu-west-1"
   image_version       = "0.6.4"
