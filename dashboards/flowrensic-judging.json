@@ -1203,7 +1203,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "sum(increase(flowrensic_findings_detected_total{class=~\"timeout_misconfiguration|retry_misconfiguration\"}[$__range]))",
+                        "expr": "sum(increase(flowrensic_findings_detected_total{class=~\"timeout_misconfiguration|retry_misconfiguration|activity_near_timeout|activity_timed_out\"}[$__range]))",
                         "legendFormat": "findings"
                       }
                     },
