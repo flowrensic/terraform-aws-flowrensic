@@ -70,10 +70,13 @@ resource "aws_ecs_service" "server" {
     assign_public_ip = true
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.ui_public.arn
-    container_name   = "server"
-    container_port   = local.main_port
+  dynamic "load_balancer" {
+    for_each = aws_lb_target_group.ui_public
+    content {
+      target_group_arn = load_balancer.value.arn
+      container_name   = "server"
+      container_port   = local.main_port
+    }
   }
 
   dynamic "load_balancer" {
@@ -102,9 +105,10 @@ resource "aws_ecs_service" "server" {
     aws_lb_listener.ui_public,
     aws_lb_listener.ui_internal,
     aws_lb_listener.ingest,
+    aws_lb_listener_rule.ingest,
+    aws_lb_listener_rule.ui_internal,
     aws_iam_role_policy.execution_secrets,
     aws_iam_role_policy.task,
     aws_s3_bucket_policy.histories,
-    aws_vpc_endpoint.s3,
   ]
 }

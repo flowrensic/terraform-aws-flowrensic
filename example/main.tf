@@ -22,7 +22,7 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.6"
+  version = "0.6.7"
 
   region              = "eu-west-1"
   image_version       = "0.6.4"
@@ -37,6 +37,11 @@ module "flowrensic" {
   # People, by IP range, and servers in the same VPC, by security group.
   allowed_cidrs              = ["192.0.2.10/32"]
   allowed_security_group_ids = ["sg-REPLACE"]
+
+  # Or load balancers you already have, by a host rule on their HTTPS listeners.
+  # With internal_listener_arn, leave allowed_security_group_ids empty.
+  # public_listener_arn   = "arn:aws:elasticloadbalancing:eu-west-1:111122223333:listener/app/public/REPLACE/REPLACE"
+  # internal_listener_arn = "arn:aws:elasticloadbalancing:eu-west-1:111122223333:listener/app/internal/REPLACE/REPLACE"
 
   # A Temporal Cloud key read through apiKeyVariable in the env list.
   secret_parameters = {

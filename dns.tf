@@ -5,7 +5,7 @@ data "aws_route53_zone" "public" {
 
 resource "aws_acm_certificate" "this" {
   domain_name               = var.ui_name
-  subject_alternative_names = [var.ingest_name, local.grafana_name]
+  subject_alternative_names = concat([var.ingest_name], var.monitoring == "ecs" ? [local.grafana_name] : [])
   validation_method         = "DNS"
   lifecycle {
     create_before_destroy = true
@@ -30,12 +30,13 @@ resource "aws_acm_certificate_validation" "this" {
 }
 
 resource "aws_route53_record" "ui_public" {
+  count   = local.ui_public
   zone_id = data.aws_route53_zone.public.zone_id
   name    = var.ui_name
   type    = "A"
   alias {
-    name                   = aws_lb.ui_public.dns_name
-    zone_id                = aws_lb.ui_public.zone_id
+    name                   = aws_lb.ui_public[0].dns_name
+    zone_id                = aws_lb.ui_public[0].zone_id
     evaluate_target_health = false
   }
 }
@@ -45,14 +46,15 @@ resource "aws_route53_record" "ingest" {
   name    = var.ingest_name
   type    = "A"
   alias {
-    name                   = aws_lb.ingest.dns_name
-    zone_id                = aws_lb.ingest.zone_id
+    name                   = local.ingest_lb.dns_name
+    zone_id                = local.ingest_lb.zone_id
     evaluate_target_health = false
   }
 }
 
-# Inside the VPC the UI name points at the internal load balancer, so a server
-# in an allowed security group reaches it by the same name.
+# Inside the VPC the UI name points at the internal load balancer, the module's
+# own or the user's, so a server in an allowed security group reaches it by the
+# same name.
 resource "aws_route53_zone" "ui_private" {
   count         = local.internal
   name          = var.ui_name
@@ -68,8 +70,8 @@ resource "aws_route53_record" "ui_private" {
   name    = var.ui_name
   type    = "A"
   alias {
-    name                   = aws_lb.ui_internal[0].dns_name
-    zone_id                = aws_lb.ui_internal[0].zone_id
+    name                   = local.internal_lb.dns_name
+    zone_id                = local.internal_lb.zone_id
     evaluate_target_health = false
   }
 }

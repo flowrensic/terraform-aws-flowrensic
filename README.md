@@ -4,10 +4,15 @@ This folder is a Terraform module. It runs Flowrensic in a VPC you already have:
 
 - one server on ECS Fargate
 - an RDS Postgres database, db.t4g.micro in one zone, with backups kept 7 days
-- a private S3 bucket for the histories, reached through an S3 gateway endpoint
-- a public load balancer for the UI and API, open only to the IP ranges you give
-- an internal load balancer for the UI and API, open only to the security groups you give
+- a private S3 bucket for the histories
+- a public load balancer for the UI and API, open only to the IP ranges you give,
+  when you give some
+- an internal load balancer for the UI and API, open only to the security groups you give,
+  when you give some
 - a public load balancer for CI jobs, HTTPS on 443, that reaches only the ingest port
+
+Instead of the internal UI load balancer and the ingest load balancer, it can use
+load balancers you already have. See Your own load balancers below.
 - Prometheus and Grafana with the Flowrensic dashboards, or the dashboards in a
   Grafana Cloud you have, or no monitoring, as the setting monitoring says
 
@@ -70,8 +75,6 @@ With a default:
   may call the UI and API. Inside the VPC, ui_name points at the internal load balancer.
 - secret_parameters: more server variables, each read from an SSM parameter, such as
   a Temporal Cloud key that the env list reads through apiKeyVariable.
-- s3_endpoint_id: an S3 gateway endpoint your VPC already has on the route tables of
-  the public subnets. Empty, the module creates one and adds it to those route tables.
 - monitoring: ecs, grafana_cloud or none, ecs by default. See Monitoring below.
 - grafana_admin_password_parameter: with ecs, the SSM parameter that holds the
   password of the Grafana user admin. Needed with ecs.
@@ -80,6 +83,31 @@ With a default:
   user of the Prometheus of your stack, and the SSM parameter that holds a token
   that can write metrics. All three are needed with grafana_cloud.
 - grafana_cloud_folder: with grafana_cloud, the folder the dashboards go in, Flowrensic.
+- public_listener_arn: the HTTPS listener on 443 of an internet-facing load balancer
+  you have, for the ingest. Empty by default.
+- internal_listener_arn: the HTTPS listener on 443 of an internal load balancer you
+  have, for the UI and API. Empty by default.
+
+## Your own load balancers
+
+With public_listener_arn, the module makes no ingest load balancer. It adds a rule
+to that listener that sends ingest_name to the ingest port, and ingest_name points
+at that load balancer.
+
+With internal_listener_arn, the module makes no internal UI load balancer. It adds
+a rule to that listener that sends ui_name to the UI, and with monitoring ecs one
+that sends grafana. and ui_name to Grafana. Inside the VPC ui_name points at that
+load balancer. Its security groups decide who reaches the UI, so
+allowed_security_group_ids must be empty.
+
+Both must be application load balancers in vpc_id. The module adds its own
+certificate to each listener, and the rules get the next free priority. It changes
+nothing else of your load balancers. Their security groups must let them out to the
+server, as a new security group does. The server lets in their security groups.
+
+allowed_cidrs still makes a public UI load balancer of the module, since your
+public one is open to everyone. To have no load balancer of the module at all, give
+both listeners and leave allowed_cidrs empty.
 
 ## Monitoring
 
@@ -112,6 +140,8 @@ With monitoring none there is neither. The server still serves its metrics on po
 group of the server to it.
 
 Moving between the settings is an apply. Leaving ecs deletes the Prometheus data.
+The certificate names grafana. and ui_name only with ecs, so moving to or from ecs
+makes a new certificate.
 
 ## Updates
 

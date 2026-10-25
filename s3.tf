@@ -59,22 +59,6 @@ data "aws_iam_policy_document" "histories" {
       values   = [aws_iam_role.task.arn]
     }
   }
-
-  statement {
-    sid       = "OnlyThroughTheGatewayEndpoint"
-    effect    = "Deny"
-    actions   = ["s3:GetObject", "s3:PutObject"]
-    resources = ["${aws_s3_bucket.histories.arn}/*"]
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "StringNotEquals"
-      variable = "aws:SourceVpce"
-      values   = [local.s3_endpoint_id]
-    }
-  }
 }
 
 resource "aws_s3_bucket_policy" "histories" {

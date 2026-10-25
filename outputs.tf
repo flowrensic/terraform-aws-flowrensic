@@ -9,8 +9,8 @@ output "ingest_url" {
 }
 
 output "ingest_load_balancer" {
-  description = "The ARN of the public ingest load balancer."
-  value       = aws_lb.ingest.arn
+  description = "The ARN of the public load balancer ingest_name points at, the module's own or the user's."
+  value       = local.ingest_lb.arn
 }
 
 output "bucket" {

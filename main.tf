@@ -2,26 +2,6 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
-# The route table of each public subnet. A subnet with no table of its own,
-# such as one of a default VPC, uses the main table of the VPC.
-data "aws_route_tables" "public" {
-  count  = var.s3_endpoint_id == "" ? length(var.public_subnet_ids) : 0
-  vpc_id = var.vpc_id
-  filter {
-    name   = "association.subnet-id"
-    values = [var.public_subnet_ids[count.index]]
-  }
-}
-
-data "aws_route_table" "main" {
-  count  = var.s3_endpoint_id == "" ? 1 : 0
-  vpc_id = var.vpc_id
-  filter {
-    name   = "association.main"
-    values = ["true"]
-  }
-}
-
 locals {
   account   = data.aws_caller_identity.current.account_id
   partition = data.aws_partition.current.partition
@@ -35,20 +15,13 @@ locals {
     variable => "arn:${local.partition}:ssm:${var.region}:${local.account}:parameter/${trimprefix(parameter, "/")}"
   }
 
-  internal = length(var.allowed_security_group_ids) > 0 ? 1 : 0
-
-  s3_endpoint_id = var.s3_endpoint_id == "" ? aws_vpc_endpoint.s3[0].id : var.s3_endpoint_id
-}
-
-resource "aws_vpc_endpoint" "s3" {
-  count             = var.s3_endpoint_id == "" ? 1 : 0
-  vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${var.region}.s3"
-  vpc_endpoint_type = "Gateway"
-  route_table_ids = distinct(flatten([
-    for tables in data.aws_route_tables.public : length(tables.ids) > 0 ? tables.ids : [data.aws_route_table.main[0].id]
-  ]))
-  tags = { Name = "${var.name}-s3" }
+  # Which load balancers are the module's own and which are the user's.
+  ui_public      = length(var.allowed_cidrs) > 0 ? 1 : 0
+  reuse_public   = var.public_listener_arn != "" ? 1 : 0
+  reuse_internal = var.internal_listener_arn != "" ? 1 : 0
+  own_ingest     = 1 - local.reuse_public
+  own_internal   = local.reuse_internal == 0 && length(var.allowed_security_group_ids) > 0 ? 1 : 0
+  internal       = max(local.own_internal, local.reuse_internal)
 }
 
 resource "aws_cloudwatch_log_group" "server" {

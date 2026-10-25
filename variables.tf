@@ -73,12 +73,6 @@ variable "secret_parameters" {
   default     = {}
 }
 
-variable "s3_endpoint_id" {
-  description = "An S3 gateway endpoint the VPC already has on the route tables of the public subnets. Empty, the module creates one."
-  type        = string
-  default     = ""
-}
-
 variable "monitoring" {
   description = "Where the server's metrics and the Flowrensic dashboards go: ecs runs Prometheus and Grafana in the cluster, grafana_cloud sends them to a Grafana Cloud you have, none sends them nowhere."
   type        = string
@@ -133,4 +127,28 @@ variable "grafana_cloud_folder" {
   description = "With monitoring grafana_cloud: the folder the dashboards go in."
   type        = string
   default     = "Flowrensic"
+}
+
+variable "public_listener_arn" {
+  description = "The HTTPS listener on 443 of an internet-facing application load balancer you have in vpc_id. When set, ingest_name goes to that load balancer by a host rule, and the module makes no ingest load balancer."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.public_listener_arn == "" || can(regex("^arn:[^:]+:elasticloadbalancing:[^:]+:[0-9]+:listener/app/", var.public_listener_arn))
+    error_message = "public_listener_arn is the ARN of a listener of an application load balancer, or empty."
+  }
+}
+
+variable "internal_listener_arn" {
+  description = "The HTTPS listener on 443 of an internal application load balancer you have in vpc_id. When set, ui_name goes to that load balancer by a host rule inside the VPC, and the module makes no internal UI load balancer. Its security groups decide who reaches the UI."
+  type        = string
+  default     = ""
+  validation {
+    condition     = var.internal_listener_arn == "" || can(regex("^arn:[^:]+:elasticloadbalancing:[^:]+:[0-9]+:listener/app/", var.internal_listener_arn))
+    error_message = "internal_listener_arn is the ARN of a listener of an application load balancer, or empty."
+  }
+  validation {
+    condition     = var.internal_listener_arn == "" || length(var.allowed_security_group_ids) == 0
+    error_message = "With internal_listener_arn, the security groups of that load balancer decide who reaches the UI, so allowed_security_group_ids must be empty."
+  }
 }

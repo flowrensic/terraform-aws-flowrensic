@@ -1,7 +1,7 @@
 # The monitoring the setting monitoring picks. With ecs, Prometheus and Grafana
 # run as one more ECS service in the cluster: Prometheus finds every server task
 # through Cloud Map and keeps its data on EFS, and Grafana is at grafana. and
-# ui_name behind the UI load balancers. With grafana_cloud, a Prometheus in
+# ui_name behind the UI load balancers, the module's own or the user's. With grafana_cloud, a Prometheus in
 # agent mode beside the server sends what it scrapes to Grafana Cloud, and the
 # dashboards go into that Grafana. With none, nothing.
 
@@ -201,16 +201,16 @@ resource "aws_vpc_security_group_egress_rule" "monitoring_out" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "monitoring_from_ui" {
-  count                        = local.monitoring_ecs
+  count                        = local.monitoring_ecs * local.ui_public
   security_group_id            = aws_security_group.monitoring[0].id
-  referenced_security_group_id = aws_security_group.ui_public.id
+  referenced_security_group_id = aws_security_group.ui_public[0].id
   ip_protocol                  = "tcp"
   from_port                    = local.grafana_port
   to_port                      = local.grafana_port
 }
 
 resource "aws_vpc_security_group_ingress_rule" "monitoring_from_internal_ui" {
-  count                        = local.monitoring_ecs * local.internal
+  count                        = local.monitoring_ecs * local.own_internal
   security_group_id            = aws_security_group.monitoring[0].id
   referenced_security_group_id = aws_security_group.ui_internal[0].id
   ip_protocol                  = "tcp"
@@ -218,9 +218,18 @@ resource "aws_vpc_security_group_ingress_rule" "monitoring_from_internal_ui" {
   to_port                      = local.grafana_port
 }
 
+resource "aws_vpc_security_group_ingress_rule" "monitoring_from_user" {
+  count                        = local.monitoring_ecs * length(local.internal_lb_security_groups)
+  security_group_id            = aws_security_group.monitoring[0].id
+  referenced_security_group_id = local.internal_lb_security_groups[count.index]
+  ip_protocol                  = "tcp"
+  from_port                    = local.grafana_port
+  to_port                      = local.grafana_port
+}
+
 resource "aws_vpc_security_group_egress_rule" "ui_public_to_grafana" {
-  count                        = local.monitoring_ecs
-  security_group_id            = aws_security_group.ui_public.id
+  count                        = local.monitoring_ecs * local.ui_public
+  security_group_id            = aws_security_group.ui_public[0].id
   referenced_security_group_id = aws_security_group.monitoring[0].id
   ip_protocol                  = "tcp"
   from_port                    = local.grafana_port
@@ -228,7 +237,7 @@ resource "aws_vpc_security_group_egress_rule" "ui_public_to_grafana" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "ui_internal_to_grafana" {
-  count                        = local.monitoring_ecs * local.internal
+  count                        = local.monitoring_ecs * local.own_internal
   security_group_id            = aws_security_group.ui_internal[0].id
   referenced_security_group_id = aws_security_group.monitoring[0].id
   ip_protocol                  = "tcp"
@@ -263,7 +272,7 @@ resource "aws_vpc_security_group_ingress_rule" "efs" {
 
 # One target group for each UI load balancer, as for the server.
 resource "aws_lb_target_group" "grafana" {
-  for_each             = local.monitoring_ecs == 1 ? merge({ public = "${var.name}-gf" }, local.internal == 1 ? { internal = "${var.name}-gf-int" } : {}) : {}
+  for_each             = local.monitoring_ecs == 1 ? merge(local.ui_public == 1 ? { public = "${var.name}-gf" } : {}, local.internal == 1 ? { internal = "${var.name}-gf-int${local.internal_suffix}" } : {}) : {}
   name                 = each.value
   vpc_id               = var.vpc_id
   target_type          = "ip"
@@ -275,12 +284,14 @@ resource "aws_lb_target_group" "grafana" {
     port    = tostring(local.grafana_port)
     matcher = "200"
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_lb_listener_rule" "grafana" {
   for_each     = aws_lb_target_group.grafana
-  listener_arn = each.key == "public" ? aws_lb_listener.ui_public.arn : aws_lb_listener.ui_internal[0].arn
-  priority     = 10
+  listener_arn = each.key == "public" ? aws_lb_listener.ui_public[0].arn : local.internal_lb.listener_arn
   action {
     type             = "forward"
     target_group_arn = each.value.arn
@@ -293,13 +304,13 @@ resource "aws_lb_listener_rule" "grafana" {
 }
 
 resource "aws_route53_record" "grafana_public" {
-  count   = local.monitoring_ecs
+  count   = local.monitoring_ecs * local.ui_public
   zone_id = data.aws_route53_zone.public.zone_id
   name    = local.grafana_name
   type    = "A"
   alias {
-    name                   = aws_lb.ui_public.dns_name
-    zone_id                = aws_lb.ui_public.zone_id
+    name                   = aws_lb.ui_public[0].dns_name
+    zone_id                = aws_lb.ui_public[0].zone_id
     evaluate_target_health = false
   }
 }
@@ -310,8 +321,8 @@ resource "aws_route53_record" "grafana_private" {
   name    = local.grafana_name
   type    = "A"
   alias {
-    name                   = aws_lb.ui_internal[0].dns_name
-    zone_id                = aws_lb.ui_internal[0].zone_id
+    name                   = local.internal_lb.dns_name
+    zone_id                = local.internal_lb.zone_id
     evaluate_target_health = false
   }
 }
