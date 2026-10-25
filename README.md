@@ -88,6 +88,11 @@ With a default:
   you have, for the ingest. Empty by default.
 - internal_listener_arn: the HTTPS listener on 443 of an internal load balancer you
   have, for the UI and API. Empty by default.
+- public_listener_rule_priority: the priority of the ingest rule on
+  public_listener_arn, from 1 to 50000. Null by default, the next free one.
+- internal_listener_rule_priority: the priority of the UI rule on
+  internal_listener_arn, from 1 to 49999. With monitoring ecs the Grafana rule
+  gets the next number. Null by default, the next free one.
 
 ## Networking
 
@@ -120,9 +125,18 @@ load balancer. Its security groups decide who reaches the UI, so
 allowed_security_group_ids must be empty.
 
 Both must be application load balancers in vpc_id. The module adds its own
-certificate to each listener, and the rules get the next free priority. It changes
-nothing else of your load balancers. Their security groups must let them out to the
+certificate to each listener. It changes nothing else of your load balancers. Their security groups must let them out to the
 server, as a new security group does. The server lets in their security groups.
+
+By default the rules get the next free priority, so they come after your rules.
+If one of your rules matches the Flowrensic names too, such as a rule for any host
+under your domain, or for a path like / or /api/auth on any host, it answers first
+and the UI or ingest never sees the call. Set public_listener_rule_priority and
+internal_listener_rule_priority to put the module's rules first. Each rule matches
+only its own host name, so this changes nothing for other hosts. Pick a low number
+that is free on the listener, such as 1. With monitoring ecs the Grafana rule takes
+the next number on the internal listener, so that one must be free too. AWS fails
+the apply when a number is taken.
 
 allowed_cidrs still makes a public UI load balancer of the module, since your
 public one is open to everyone. To have no load balancer of the module at all, give

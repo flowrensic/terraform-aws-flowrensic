@@ -158,3 +158,23 @@ variable "internal_listener_arn" {
     error_message = "With internal_listener_arn, the security groups of that load balancer decide who reaches the UI, so allowed_security_group_ids must be empty."
   }
 }
+
+variable "public_listener_rule_priority" {
+  description = "The priority of the ingest rule on public_listener_arn. Null gives it the next free priority, after your rules."
+  type        = number
+  default     = null
+  validation {
+    condition     = var.public_listener_rule_priority == null || try(var.public_listener_rule_priority >= 1 && var.public_listener_rule_priority <= 50000 && floor(var.public_listener_rule_priority) == var.public_listener_rule_priority, false)
+    error_message = "public_listener_rule_priority is a whole number from 1 to 50000, or null."
+  }
+}
+
+variable "internal_listener_rule_priority" {
+  description = "The priority of the UI rule on internal_listener_arn. With monitoring ecs the Grafana rule gets the next number. Null gives them the next free priorities, after your rules."
+  type        = number
+  default     = null
+  validation {
+    condition     = var.internal_listener_rule_priority == null || try(var.internal_listener_rule_priority >= 1 && var.internal_listener_rule_priority <= 49999 && floor(var.internal_listener_rule_priority) == var.internal_listener_rule_priority, false)
+    error_message = "internal_listener_rule_priority is a whole number from 1 to 49999, or null."
+  }
+}

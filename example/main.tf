@@ -24,7 +24,7 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.11"
+  version = "0.6.12"
 
   region              = "eu-west-1"
   image_version       = "0.6.4"
@@ -47,6 +47,9 @@ module "flowrensic" {
   # With internal_listener_arn, leave allowed_security_group_ids empty.
   # public_listener_arn   = "arn:aws:elasticloadbalancing:eu-west-1:111122223333:listener/app/public/REPLACE/REPLACE"
   # internal_listener_arn = "arn:aws:elasticloadbalancing:eu-west-1:111122223333:listener/app/internal/REPLACE/REPLACE"
+  # Put the module's rules before yours, at a free priority. Grafana takes the next one.
+  # public_listener_rule_priority   = 1
+  # internal_listener_rule_priority = 1
 
   # A Temporal Cloud key read through apiKeyVariable in the env list.
   secret_parameters = {

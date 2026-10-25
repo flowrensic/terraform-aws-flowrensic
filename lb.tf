@@ -201,8 +201,8 @@ resource "aws_lb_listener" "ingest" {
   }
 }
 
-# On the user's listeners: the module's certificate, and a rule for each name.
-# AWS gives each rule the next free priority.
+# On the user's listeners: the module's certificate, and a rule for each name,
+# at the priority set, or the next free one when it is null.
 resource "aws_lb_listener_certificate" "public" {
   count           = local.reuse_public
   listener_arn    = var.public_listener_arn
@@ -218,6 +218,7 @@ resource "aws_lb_listener_certificate" "internal" {
 resource "aws_lb_listener_rule" "ingest" {
   count        = local.reuse_public
   listener_arn = var.public_listener_arn
+  priority     = var.public_listener_rule_priority
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ingest.arn
@@ -233,6 +234,7 @@ resource "aws_lb_listener_rule" "ingest" {
 resource "aws_lb_listener_rule" "ui_internal" {
   count        = local.reuse_internal
   listener_arn = var.internal_listener_arn
+  priority     = var.internal_listener_rule_priority
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.ui_internal[0].arn

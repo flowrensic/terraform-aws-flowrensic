@@ -292,6 +292,7 @@ resource "aws_lb_target_group" "grafana" {
 resource "aws_lb_listener_rule" "grafana" {
   for_each     = aws_lb_target_group.grafana
   listener_arn = each.key == "public" ? aws_lb_listener.ui_public[0].arn : local.internal_lb.listener_arn
+  priority     = each.key == "internal" && local.reuse_internal == 1 && var.internal_listener_rule_priority != null ? var.internal_listener_rule_priority + 1 : null
   action {
     type             = "forward"
     target_group_arn = each.value.arn
