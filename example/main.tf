@@ -24,7 +24,7 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.20"
+  version = "0.6.21"
 
   region              = "eu-west-1"
   image_version       = "0.6.4"
@@ -51,9 +51,11 @@ module "flowrensic" {
   # public_listener_rule_priority   = 1
   # internal_listener_rule_priority = 1
 
-  # A Temporal Cloud key read through apiKeyVariable in the env list.
+  # The Temporal Cloud keys the env list reads through temporalReadApiKeyVariable,
+  # and through temporalWriteApiKeyVariable for the Remediate button.
   secret_parameters = {
-    TEMPORAL_CLOUD_API_KEY = "/flowrensic/temporal-cloud-api-key"
+    TEMPORAL_CLOUD_READ_API_KEY  = "/flowrensic/temporal-cloud-read-api-key"
+    TEMPORAL_CLOUD_WRITE_API_KEY = "/flowrensic/temporal-cloud-write-api-key"
   }
 
   # Prometheus and Grafana in the cluster, at grafana. and ui_name.

@@ -79,7 +79,9 @@ With a default:
 - allowed_security_group_ids: the security groups of servers in the same VPC that
   may call the UI and API. Inside the VPC, ui_name points at the internal load balancer.
 - secret_parameters: more server variables, each read from an SSM parameter, such as
-  a Temporal Cloud key that the env list reads through apiKeyVariable.
+  a Temporal Cloud key that the env list reads through temporalReadApiKeyVariable, or a
+  key that can write, read through temporalWriteApiKeyVariable, which the Remediate
+  button needs.
 - monitoring: ecs, grafana_cloud or none, ecs by default. See Monitoring below.
 - grafana_admin_password_parameter: with ecs, the SSM parameter that holds the
   password of the Grafana user admin. Needed with ecs.
