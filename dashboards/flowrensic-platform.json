@@ -83,7 +83,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "up{job=\"flowrensic\"} * on(instance) group_left(host) flowrensic_instance_info",
+                        "expr": "(up{job=\"flowrensic\"} * on(instance) group_left(host) last_over_time(flowrensic_instance_info[1h])) or up{job=\"flowrensic\"}",
                         "instant": true,
                         "range": false,
                         "format": "table"
