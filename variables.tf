@@ -83,10 +83,20 @@ variable "database_instance_class" {
   default     = "db.t4g.small"
 }
 
+variable "alarm_topic_arn" {
+  description = "An SNS topic the user already has, which gets the CloudWatch alarms of the module. Its policy has to let events.amazonaws.com publish. Empty makes a topic of the module's own."
+  type        = string
+  default     = ""
+}
+
 variable "alarm_emails" {
-  description = "Email addresses that get the CloudWatch alarms of the module. Each one confirms the subscription from the first email."
+  description = "Email addresses that get the alarms on the module's own topic, only without alarm_topic_arn. Each one confirms the subscription from the first email."
   type        = list(string)
   default     = []
+  validation {
+    condition     = length(var.alarm_emails) == 0 || var.alarm_topic_arn == ""
+    error_message = "alarm_emails is only for the module's own topic. With alarm_topic_arn, subscribe to that topic instead."
+  }
 }
 
 variable "allowed_cidrs" {

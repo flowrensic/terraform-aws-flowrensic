@@ -1,9 +1,12 @@
 # CloudWatch alarms on the critical metrics of the server and the database.
-# Each alarm, and each server task that stops by itself, goes to the SNS
-# topic, and the addresses of alarm_emails get it by email.
+# Each alarm, and each server task that stops by itself, goes to the SNS topic
+# of alarm_topic_arn. Without one, the module makes a topic of its own and the
+# addresses of alarm_emails get it by email.
 
 locals {
-  alarm_actions = [aws_sns_topic.alarms.arn]
+  own_alarm_topic = var.alarm_topic_arn == "" ? 1 : 0
+  alarm_topic     = local.own_alarm_topic == 1 ? aws_sns_topic.alarms[0].arn : var.alarm_topic_arn
+  alarm_actions   = [local.alarm_topic]
 
   # The target groups the server is in, each with its load balancer.
   alarm_target_groups = merge(
@@ -17,20 +20,22 @@ locals {
 }
 
 resource "aws_sns_topic" "alarms" {
-  name = "${var.name}-alarms"
+  count = local.own_alarm_topic
+  name  = "${var.name}-alarms"
 }
 
 resource "aws_sns_topic_subscription" "alarms" {
-  for_each  = toset(var.alarm_emails)
-  topic_arn = aws_sns_topic.alarms.arn
+  for_each  = local.own_alarm_topic == 1 ? toset(var.alarm_emails) : toset([])
+  topic_arn = aws_sns_topic.alarms[0].arn
   protocol  = "email"
   endpoint  = each.value
 }
 
 data "aws_iam_policy_document" "alarms_topic" {
+  count = local.own_alarm_topic
   statement {
     actions   = ["sns:Publish"]
-    resources = [aws_sns_topic.alarms.arn]
+    resources = [aws_sns_topic.alarms[0].arn]
     principals {
       type        = "Service"
       identifiers = ["events.amazonaws.com", "cloudwatch.amazonaws.com"]
@@ -44,8 +49,9 @@ data "aws_iam_policy_document" "alarms_topic" {
 }
 
 resource "aws_sns_topic_policy" "alarms" {
-  arn    = aws_sns_topic.alarms.arn
-  policy = data.aws_iam_policy_document.alarms_topic.json
+  count  = local.own_alarm_topic
+  arn    = aws_sns_topic.alarms[0].arn
+  policy = data.aws_iam_policy_document.alarms_topic[0].json
 }
 
 # A server task whose container exits with a code other than 0, such as 137
@@ -66,7 +72,7 @@ resource "aws_cloudwatch_event_rule" "server_stopped" {
 
 resource "aws_cloudwatch_event_target" "server_stopped" {
   rule = aws_cloudwatch_event_rule.server_stopped.name
-  arn  = aws_sns_topic.alarms.arn
+  arn  = local.alarm_topic
   input_transformer {
     input_paths = {
       task   = "$.detail.taskArn"

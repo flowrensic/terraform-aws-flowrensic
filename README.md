@@ -79,8 +79,10 @@ With a default:
   more CPU.
 - database_instance_class: the RDS instance class, db.t4g.small by default, which
   has 2 GB of memory.
-- alarm_emails: email addresses that get the CloudWatch alarms, empty by default.
-  See Alarms below.
+- alarm_topic_arn: an SNS topic you already have for alarms. Empty by default,
+  which makes a topic of the module's own. See Alarms below.
+- alarm_emails: with no alarm_topic_arn, email addresses that get the alarms on
+  the module's own topic, empty by default.
 - allowed_cidrs: the IP ranges of people that may open the UI and API.
 - allowed_security_group_ids: the security groups of servers in the same VPC that
   may call the UI and API. Inside the VPC, ui_name points at the internal load balancer.
@@ -219,8 +221,12 @@ has no deletion protection and no final snapshot.
 ## Alarms
 
 The module puts CloudWatch alarms on the server and the database and sends them to
-the SNS topic of the output alarm_topic. Each address of alarm_emails gets them by
-email after it confirms the first message. An alarm fires when:
+the SNS topic of alarm_topic_arn, a topic you already have, such as the one your
+other alarms go to. The policy of that topic has to let events.amazonaws.com
+publish, for the alarm on a stopped server task. Without alarm_topic_arn the
+module makes a topic of its own, and each address of alarm_emails gets the alarms
+by email after it confirms the first message. The output alarm_topic names the
+topic either way. An alarm fires when:
 
 - a server task stops by itself, such as killed for running out of memory
 - no healthy server is behind a target group for 3 minutes

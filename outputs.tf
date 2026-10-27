@@ -64,6 +64,6 @@ output "log_group" {
 }
 
 output "alarm_topic" {
-  description = "The SNS topic the alarms go to, for more subscriptions."
-  value       = aws_sns_topic.alarms.arn
+  description = "The SNS topic the alarms go to, the user's or the module's own."
+  value       = local.alarm_topic
 }
