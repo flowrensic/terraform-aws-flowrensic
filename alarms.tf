@@ -80,7 +80,11 @@ resource "aws_cloudwatch_event_target" "server_stopped" {
       exit   = "$.detail.containers[0].exitCode"
       why    = "$.detail.containers[0].reason"
     }
-    input_template = "\"Flowrensic server task <task> stopped by itself: <reason>, exit code <exit>, <why>.\""
+    # The custom notification format of Amazon Q Developer in chat
+    # applications, so a Slack channel on the topic shows it too.
+    input_template = <<-EOT
+      {"version": "1.0", "source": "custom", "content": {"textType": "client-markdown", "title": "Flowrensic server task stopped by itself", "description": "<reason>\nExit code <exit>: <why>\nTask: <task>"}}
+    EOT
   }
 }
 
