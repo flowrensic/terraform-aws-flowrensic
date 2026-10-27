@@ -77,6 +77,18 @@ variable "server_memory" {
   default     = 1024
 }
 
+variable "database_instance_class" {
+  description = "The RDS instance class of the database."
+  type        = string
+  default     = "db.t4g.small"
+}
+
+variable "alarm_emails" {
+  description = "Email addresses that get the CloudWatch alarms of the module. Each one confirms the subscription from the first email."
+  type        = list(string)
+  default     = []
+}
+
 variable "allowed_cidrs" {
   description = "IP ranges of people that may reach the UI and API, each a CIDR such as an address with /32."
   type        = list(string)

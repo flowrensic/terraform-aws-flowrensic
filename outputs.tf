@@ -62,3 +62,8 @@ output "log_group" {
   description = "The CloudWatch log group of the server."
   value       = aws_cloudwatch_log_group.server.name
 }
+
+output "alarm_topic" {
+  description = "The SNS topic the alarms go to, for more subscriptions."
+  value       = aws_sns_topic.alarms.arn
+}

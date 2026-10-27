@@ -77,6 +77,10 @@ With a default:
   default, which is 0.5 vCPU and 1 GB. Fargate allows only some pairs: one vCPU,
   1024, needs at least 2048 of memory. A server that pulls many histories needs
   more CPU.
+- database_instance_class: the RDS instance class, db.t4g.small by default, which
+  has 2 GB of memory.
+- alarm_emails: email addresses that get the CloudWatch alarms, empty by default.
+  See Alarms below.
 - allowed_cidrs: the IP ranges of people that may open the UI and API.
 - allowed_security_group_ids: the security groups of servers in the same VPC that
   may call the UI and API. Inside the VPC, ui_name points at the internal load balancer.
@@ -211,3 +215,20 @@ again with:
 
 terraform destroy removes everything, the histories in the bucket too. The database
 has no deletion protection and no final snapshot.
+
+## Alarms
+
+The module puts CloudWatch alarms on the server and the database and sends them to
+the SNS topic of the output alarm_topic. Each address of alarm_emails gets them by
+email after it confirms the first message. An alarm fires when:
+
+- a server task stops by itself, such as killed for running out of memory
+- no healthy server is behind a target group for 3 minutes
+- the server answers 5 or more 5xx in 5 minutes
+- the server task uses more than 80% of its memory for 3 minutes, or of its CPU
+  for 10 minutes
+- the database has less than 100 MB free memory or uses more than 50 MB of swap
+  for 15 minutes
+- the database, of a db.t class, has fewer than 5 CPU credits left
+- the database has less than 10% of its storage free
+- the database uses more than 80% of its CPU for 15 minutes

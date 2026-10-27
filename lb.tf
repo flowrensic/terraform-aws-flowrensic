@@ -13,21 +13,25 @@ locals {
 
   # The load balancer each name points at, the module's own or the user's.
   ingest_lb = local.reuse_public == 1 ? {
-    arn      = data.aws_lb.public[0].arn
-    dns_name = data.aws_lb.public[0].dns_name
-    zone_id  = data.aws_lb.public[0].zone_id
+    arn        = data.aws_lb.public[0].arn
+    arn_suffix = data.aws_lb.public[0].arn_suffix
+    dns_name   = data.aws_lb.public[0].dns_name
+    zone_id    = data.aws_lb.public[0].zone_id
     } : {
-    arn      = aws_lb.ingest[0].arn
-    dns_name = aws_lb.ingest[0].dns_name
-    zone_id  = aws_lb.ingest[0].zone_id
+    arn        = aws_lb.ingest[0].arn
+    arn_suffix = aws_lb.ingest[0].arn_suffix
+    dns_name   = aws_lb.ingest[0].dns_name
+    zone_id    = aws_lb.ingest[0].zone_id
   }
 
   internal_lb = local.reuse_internal == 1 ? {
     listener_arn = var.internal_listener_arn
+    arn_suffix   = data.aws_lb.internal[0].arn_suffix
     dns_name     = data.aws_lb.internal[0].dns_name
     zone_id      = data.aws_lb.internal[0].zone_id
     } : local.own_internal == 1 ? {
     listener_arn = aws_lb_listener.ui_internal[0].arn
+    arn_suffix   = aws_lb.ui_internal[0].arn_suffix
     dns_name     = aws_lb.ui_internal[0].dns_name
     zone_id      = aws_lb.ui_internal[0].zone_id
   } : null
