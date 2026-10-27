@@ -43,6 +43,16 @@ variable "envs_parameter" {
   type        = string
 }
 
+variable "required_envs" {
+  description = "The envs required to publish history, FLOWRENSIC_REQUIRED_ENVS. Each must be an env of FLOWRENSIC_ENVS."
+  type        = list(string)
+
+  validation {
+    condition     = length(var.required_envs) > 0
+    error_message = "required_envs needs at least one env."
+  }
+}
+
 variable "name" {
   description = "The start of every resource name."
   type        = string

@@ -33,6 +33,7 @@ resource "aws_ecs_task_definition" "server" {
       { name = "FLOWRENSIC_BLOB_S3_BUCKET", value = aws_s3_bucket.histories.id },
       { name = "FLOWRENSIC_BLOB_S3_REGION", value = var.region },
       { name = "FLOWRENSIC_BLOB_S3_ENDPOINT", value = "s3.${var.region}.amazonaws.com" },
+      { name = "FLOWRENSIC_REQUIRED_ENVS", value = join(",", var.required_envs) },
     ]
     secrets = concat(
       [

@@ -24,7 +24,7 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.23"
+  version = "0.6.24"
 
   region              = "eu-west-1"
   image_version       = "0.6.4"
@@ -38,6 +38,7 @@ module "flowrensic" {
   ingest_name    = "flowrensic-ingest.example.com"
   dns_zone       = "example.com"
   envs_parameter = "/flowrensic/envs"
+  required_envs  = ["prod"]
 
   # People, by IP range, and servers in the same VPC, by security group.
   allowed_cidrs              = ["192.0.2.10/32"]
