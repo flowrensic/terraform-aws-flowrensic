@@ -90,6 +90,9 @@ With a default:
   a Temporal Cloud key that the env list reads through temporalReadApiKeyVariable, or a
   key that can write, read through temporalWriteApiKeyVariable, which the Remediate
   button needs.
+- reset_database_on_deploy: false by default. When true, a server of another
+  image_version empties the database before it starts, and pulls again what Temporal
+  still keeps. A restart of the same version keeps the data. The history files stay.
 - monitoring: ecs, grafana_cloud or none, ecs by default. See Monitoring below.
 - grafana_admin_password_parameter: with ecs, the SSM parameter that holds the
   password of the Grafana user admin. Needed with ecs.

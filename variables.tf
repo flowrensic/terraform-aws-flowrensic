@@ -123,6 +123,12 @@ variable "secret_parameters" {
   default     = {}
 }
 
+variable "reset_database_on_deploy" {
+  description = "Empty the database when a server of another image_version starts, FLOWRENSIC_RESET_DATABASE_ON_DEPLOY. The history files stay."
+  type        = bool
+  default     = false
+}
+
 variable "monitoring" {
   description = "Where the server's metrics and the Flowrensic dashboards go: ecs runs Prometheus and Grafana in the cluster, grafana_cloud sends them to a Grafana Cloud you have, none sends them nowhere."
   type        = string
