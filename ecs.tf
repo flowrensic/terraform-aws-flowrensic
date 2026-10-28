@@ -35,6 +35,8 @@ resource "aws_ecs_task_definition" "server" {
       { name = "FLOWRENSIC_BLOB_S3_ENDPOINT", value = "s3.${var.region}.amazonaws.com" },
       { name = "FLOWRENSIC_REQUIRED_ENVS", value = join(",", var.required_envs) },
       { name = "FLOWRENSIC_RESET_DATABASE_ON_DEPLOY", value = tostring(var.reset_database_on_deploy) },
+      { name = "FLOWRENSIC_DATABASE_POOL_SIZE", value = tostring(var.database_pool_size) },
+      { name = "FLOWRENSIC_DATABASE_CALL_POOL_SIZE", value = tostring(var.database_call_pool_size) },
     ]
     secrets = concat(
       [

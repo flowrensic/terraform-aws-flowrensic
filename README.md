@@ -79,6 +79,10 @@ With a default:
   more CPU.
 - database_instance_class: the RDS instance class, db.t4g.small by default, which
   has 2 GB of memory.
+- database_pool_size and database_call_pool_size: the most database connections
+  one server holds for the ingest calls and background jobs, 24 by default, and
+  for the UI and API calls, 6 by default. A deploy runs two servers for a while,
+  so the database takes twice the sum.
 - alarm_topic_arn: an SNS topic you already have for alarms. Empty by default,
   which makes a topic of the module's own. See Alarms below.
 - alarm_emails: with no alarm_topic_arn, email addresses that get the alarms on

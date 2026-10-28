@@ -83,6 +83,18 @@ variable "database_instance_class" {
   default     = "db.t4g.small"
 }
 
+variable "database_pool_size" {
+  description = "The most database connections the ingest calls and the background jobs of one server hold, FLOWRENSIC_DATABASE_POOL_SIZE."
+  type        = number
+  default     = 24
+}
+
+variable "database_call_pool_size" {
+  description = "The most database connections the UI and API calls of one server hold, FLOWRENSIC_DATABASE_CALL_POOL_SIZE, apart from the ingest calls and the background jobs."
+  type        = number
+  default     = 6
+}
+
 variable "alarm_topic_arn" {
   description = "An SNS topic the user already has, which gets the CloudWatch alarms of the module. Its policy has to let events.amazonaws.com publish. Empty makes a topic of the module's own."
   type        = string
