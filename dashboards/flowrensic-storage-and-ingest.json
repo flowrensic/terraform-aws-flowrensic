@@ -37,7 +37,7 @@
         "spec": {
           "id": 1,
           "title": "",
-          "description": "",
+          "description": "The metrics of the Temporal server, the engine, that Flowrensic reads from the metrics endpoint of the engine or that a worker forwards. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no env has an engine metrics address and no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -69,7 +69,7 @@
         "spec": {
           "id": 2,
           "title": "Engine items per second",
-          "description": "Items stored per second in this category.",
+          "description": "Items of engine data stored per second, summed over all servers. An item is a sample, one number of the engine at one time. A refused request stores nothing and counts nothing. There is no good or bad value of its own: it follows how much your Temporal system does. Compare it with earlier days; a drop to 0 while your system works means this data stopped coming in. No data or a flat 0 when no env has an engine metrics address and no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -117,7 +117,7 @@
         "spec": {
           "id": 3,
           "title": "Engine bytes per second",
-          "description": "Bytes stored per second in this category.",
+          "description": "Bytes of engine data stored per second, summed over all servers: the size of the answer of the engine, or of the request the worker sent. There is no good or bad value of its own. Read it with the items per second: more bytes for each item means larger items. No data or a flat 0 when no env has an engine metrics address and no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -165,7 +165,7 @@
         "spec": {
           "id": 4,
           "title": "Engine stored size",
-          "description": "Size on disk of everything stored in this category.",
+          "description": "Size on disk of all engine data stored, in bytes: the engine_metrics table. One value for the whole install, so several servers on one database show the same size. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing; the storage against its size limit is on the sustainability dashboard. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -213,7 +213,7 @@
         "spec": {
           "id": 5,
           "title": "",
-          "description": "",
+          "description": "The activity events a worker running the Flowrensic interceptor sends: each attempt of an activity, with its times and result. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -245,7 +245,7 @@
         "spec": {
           "id": 6,
           "title": "Worker items per second",
-          "description": "Items stored per second in this category.",
+          "description": "Items of worker data stored per second, summed over all servers. An item is an activity event. A refused request stores nothing and counts nothing. There is no good or bad value of its own: it follows how much your Temporal system does. Compare it with earlier days; a drop to 0 while your system works means this data stopped coming in. No data or a flat 0 when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -293,7 +293,7 @@
         "spec": {
           "id": 7,
           "title": "Worker bytes per second",
-          "description": "Bytes stored per second in this category.",
+          "description": "Bytes of worker data stored per second, summed over all servers: the size of the request the worker sent. There is no good or bad value of its own. Read it with the items per second: more bytes for each item means larger items. No data or a flat 0 when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -341,7 +341,7 @@
         "spec": {
           "id": 8,
           "title": "Worker stored size",
-          "description": "Size on disk of everything stored in this category.",
+          "description": "Size on disk of all worker data stored, in bytes: the activity_events table. One value for the whole install, so several servers on one database show the same size. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing; the storage against its size limit is on the sustainability dashboard. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -389,7 +389,7 @@
         "spec": {
           "id": 9,
           "title": "",
-          "description": "",
+          "description": "The histories of the runs, pulled from the engine or sent by a worker, with the run records. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no namespace is pulled and no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -421,7 +421,7 @@
         "spec": {
           "id": 10,
           "title": "History items per second",
-          "description": "Items stored per second in this category.",
+          "description": "Items of history data stored per second, summed over all servers. An item is an event of a run history; a run already stored counts only its new events. A refused request stores nothing and counts nothing. There is no good or bad value of its own: it follows how much your Temporal system does. Compare it with earlier days; a drop to 0 while your system works means this data stopped coming in. No data or a flat 0 when no namespace is pulled and no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -469,7 +469,7 @@
         "spec": {
           "id": 11,
           "title": "History bytes per second",
-          "description": "Bytes stored per second in this category.",
+          "description": "Bytes of history data stored per second, summed over all servers: the size of the new events. There is no good or bad value of its own. Read it with the items per second: more bytes for each item means larger items. No data or a flat 0 when no namespace is pulled and no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -517,7 +517,7 @@
         "spec": {
           "id": 12,
           "title": "History stored size",
-          "description": "Size on disk of everything stored in this category.",
+          "description": "Size on disk of all history data stored, in bytes: the runs table and the history files together. One value for the whole install, so several servers on one database show the same size. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing; the storage against its size limit is on the sustainability dashboard. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -565,7 +565,7 @@
         "spec": {
           "id": 13,
           "title": "",
-          "description": "",
+          "description": "The stages of each deploy that the deploy pipeline writes to Flowrensic. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -597,7 +597,7 @@
         "spec": {
           "id": 14,
           "title": "Deploys items per second",
-          "description": "Items stored per second in this category.",
+          "description": "Items of deploys data stored per second, summed over all servers. An item is one stage write. A refused request stores nothing and counts nothing. There is no good or bad value of its own: it follows how much your Temporal system does. Compare it with earlier days; a drop to 0 while your system works means this data stopped coming in. No data or a flat 0 when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -645,7 +645,7 @@
         "spec": {
           "id": 15,
           "title": "Deploys bytes per second",
-          "description": "Bytes stored per second in this category.",
+          "description": "Bytes of deploys data stored per second, summed over all servers: the size of the request the pipeline sent. There is no good or bad value of its own. Read it with the items per second: more bytes for each item means larger items. No data or a flat 0 when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -693,7 +693,7 @@
         "spec": {
           "id": 16,
           "title": "Deploys stored size",
-          "description": "Size on disk of everything stored in this category.",
+          "description": "Size on disk of all deploys data stored, in bytes: the deployments and deploy_refusals tables. One value for the whole install, so several servers on one database show the same size. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing; the storage against its size limit is on the sustainability dashboard. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -741,7 +741,7 @@
         "spec": {
           "id": 17,
           "title": "",
-          "description": "",
+          "description": "The results of the replay tests that a pipeline reports to Flowrensic. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -773,7 +773,7 @@
         "spec": {
           "id": 18,
           "title": "Replay items per second",
-          "description": "Items stored per second in this category.",
+          "description": "Items of replay data stored per second, summed over all servers. An item is one accepted result. A refused request stores nothing and counts nothing. There is no good or bad value of its own: it follows how much your Temporal system does. Compare it with earlier days; a drop to 0 while your system works means this data stopped coming in. No data or a flat 0 when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -821,7 +821,7 @@
         "spec": {
           "id": 19,
           "title": "Replay bytes per second",
-          "description": "Bytes stored per second in this category.",
+          "description": "Bytes of replay data stored per second, summed over all servers: the size of the request the pipeline sent. There is no good or bad value of its own. Read it with the items per second: more bytes for each item means larger items. No data or a flat 0 when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -869,7 +869,7 @@
         "spec": {
           "id": 20,
           "title": "Replay stored size",
-          "description": "Size on disk of everything stored in this category.",
+          "description": "Size on disk of all replay data stored, in bytes: the replay_results table. One value for the whole install, so several servers on one database show the same size. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing; the storage against its size limit is on the sustainability dashboard. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -917,7 +917,7 @@
         "spec": {
           "id": 21,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestActivityEvents takes in the activity attempts a worker running the Flowrensic interceptor sends. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -949,7 +949,7 @@
         "spec": {
           "id": 22,
           "title": "IngestActivityEvents requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestActivityEvents per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -997,7 +997,7 @@
         "spec": {
           "id": 23,
           "title": "IngestActivityEvents response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestActivityEvents were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1045,7 +1045,7 @@
         "spec": {
           "id": 24,
           "title": "IngestActivityEvents responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestActivityEvents answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1093,7 +1093,7 @@
         "spec": {
           "id": 25,
           "title": "IngestActivityEvents responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestActivityEvents answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1141,7 +1141,7 @@
         "spec": {
           "id": 26,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestHistory takes in a run history sent by any client. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1173,7 +1173,7 @@
         "spec": {
           "id": 27,
           "title": "IngestHistory requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestHistory per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1221,7 +1221,7 @@
         "spec": {
           "id": 28,
           "title": "IngestHistory response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestHistory were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1269,7 +1269,7 @@
         "spec": {
           "id": 29,
           "title": "IngestHistory responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestHistory answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1317,7 +1317,7 @@
         "spec": {
           "id": 30,
           "title": "IngestHistory responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestHistory answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1365,7 +1365,7 @@
         "spec": {
           "id": 31,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestEngineHistory takes in a history a worker read from the engine and forwards. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no worker forwards histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1397,7 +1397,7 @@
         "spec": {
           "id": 32,
           "title": "IngestEngineHistory requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestEngineHistory per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no worker forwards histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1445,7 +1445,7 @@
         "spec": {
           "id": 33,
           "title": "IngestEngineHistory response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestEngineHistory were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1493,7 +1493,7 @@
         "spec": {
           "id": 34,
           "title": "IngestEngineHistory responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestEngineHistory answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no worker forwards histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1541,7 +1541,7 @@
         "spec": {
           "id": 35,
           "title": "IngestEngineHistory responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestEngineHistory answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1589,7 +1589,7 @@
         "spec": {
           "id": 36,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestEnvInstanceMetrics takes in engine metrics a worker read and forwards. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1621,7 +1621,7 @@
         "spec": {
           "id": 37,
           "title": "IngestEnvInstanceMetrics requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestEnvInstanceMetrics per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1669,7 +1669,7 @@
         "spec": {
           "id": 38,
           "title": "IngestEnvInstanceMetrics response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestEnvInstanceMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1717,7 +1717,7 @@
         "spec": {
           "id": 39,
           "title": "IngestEnvInstanceMetrics responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestEnvInstanceMetrics answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1765,7 +1765,7 @@
         "spec": {
           "id": 40,
           "title": "IngestEnvInstanceMetrics responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestEnvInstanceMetrics answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1813,7 +1813,7 @@
         "spec": {
           "id": 41,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestReplayResults takes in the replay test results a pipeline reports. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1845,7 +1845,7 @@
         "spec": {
           "id": 42,
           "title": "IngestReplayResults requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestReplayResults per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1893,7 +1893,7 @@
         "spec": {
           "id": 43,
           "title": "IngestReplayResults response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestReplayResults were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1941,7 +1941,7 @@
         "spec": {
           "id": 44,
           "title": "IngestReplayResults responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestReplayResults answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1989,7 +1989,7 @@
         "spec": {
           "id": 45,
           "title": "IngestReplayResults responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestReplayResults answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2037,7 +2037,7 @@
         "spec": {
           "id": 46,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestDeployStage takes in the deploy stages the deploy pipeline writes. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2069,7 +2069,7 @@
         "spec": {
           "id": 47,
           "title": "IngestDeployStage requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestDeployStage per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2117,7 +2117,7 @@
         "spec": {
           "id": 48,
           "title": "IngestDeployStage response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestDeployStage were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2165,7 +2165,7 @@
         "spec": {
           "id": 49,
           "title": "IngestDeployStage responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestDeployStage answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2213,7 +2213,7 @@
         "spec": {
           "id": 50,
           "title": "IngestDeployStage responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestDeployStage answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2261,7 +2261,7 @@
         "spec": {
           "id": 51,
           "title": "",
-          "description": "",
+          "description": "The server lists the runs of each namespace of the engine and fetches the histories it does not hold yet. A poll is one pass over one namespace. A fetch is one history read from the engine. Each line is all namespaces and servers together. The whole section has no data when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2293,7 +2293,7 @@
         "spec": {
           "id": 52,
           "title": "Polls per second",
-          "description": "Passes over a namespace.",
+          "description": "Polls per second, whatever the result. Normal: steady, about one for each namespace in each poll interval. Bad: a drop to 0 while the engine runs, the puller stopped. No data before the first poll, so it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2341,7 +2341,7 @@
         "spec": {
           "id": 53,
           "title": "Poll duration p95",
-          "description": "The p95 of the time one poll took, in seconds.",
+          "description": "The time in seconds in which 95% of the polls ended, over the last few minutes. Normal: well under the poll interval. Bad: close to the interval or above it; the puller falls behind, see its job section on the sustainability dashboard. No data when there was no poll in that time, so it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2389,7 +2389,7 @@
         "spec": {
           "id": 54,
           "title": "Poll failures per second",
-          "description": "Polls that ended with an error.",
+          "description": "Polls per second that ended with an error, for example when the engine could not be reached. Normal: 0. Bad: above 0; the warn and error lines of the server name the namespace and the error. No data before the first poll; from then on it shows 0, and it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2437,7 +2437,7 @@
         "spec": {
           "id": 55,
           "title": "History fetches per second",
-          "description": "Histories fetched from an engine.",
+          "description": "Histories fetched from the engine per second. Normal: it follows how many runs start and change in the engine. Bad: 0 for a long time while runs change. No data before the first fetch, so it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2485,7 +2485,7 @@
         "spec": {
           "id": 56,
           "title": "Fetch duration p95",
-          "description": "The p95 of the time one fetch took, in seconds.",
+          "description": "The time in seconds in which 95% of the fetches of a history ended, over the last few minutes. Normal: well under a second for most histories; large histories take longer. Bad: a line that climbs; the engine is slow or the histories are large. No data when there was no fetch in that time, so it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2533,7 +2533,7 @@
         "spec": {
           "id": 57,
           "title": "Fetch failures per second",
-          "description": "Fetches that ended with an error.",
+          "description": "Fetches per second that ended with an error. Normal: 0. Bad: above 0, some histories were not stored and will be fetched again; the warn and error lines of the server say why. No data before the first fetch; from then on it shows 0, and it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2581,7 +2581,7 @@
         "spec": {
           "id": 58,
           "title": "",
-          "description": "",
+          "description": "The server reads the metrics endpoint of each engine it knows the address of, a Temporal server you run or Temporal Cloud. A scrape is one read of one endpoint. Each line is all engines and servers together. The whole section has no data when no env has an engine metrics address.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2613,7 +2613,7 @@
         "spec": {
           "id": 59,
           "title": "Scrapes per second",
-          "description": "Reads of an engine metrics endpoint.",
+          "description": "Reads of an engine metrics endpoint per second, whatever the result. Normal: steady, one for each engine in each scrape interval. Bad: a drop to 0, the scraper stopped. No data before the first scrape, so it stays empty when no env has an engine metrics address.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2661,7 +2661,7 @@
         "spec": {
           "id": 60,
           "title": "Scrape duration p95",
-          "description": "The p95 of the time one scrape took, in seconds.",
+          "description": "The time in seconds in which 95% of the scrapes ended, over the last few minutes. Normal: well under the scrape interval. Bad: close to the interval or above it; engine metrics come late. No data when there was no scrape in that time, so it stays empty when no env has an engine metrics address.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2709,7 +2709,7 @@
         "spec": {
           "id": 61,
           "title": "Scrape failures per second",
-          "description": "Scrapes that ended with an error.",
+          "description": "Scrapes per second that ended with an error, for example when the endpoint could not be reached. Normal: 0. Bad: above 0, engine metrics are missing; the warn lines of the server name the endpoint. No data before the first scrape; from then on it shows 0, and it stays empty when no env has an engine metrics address.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2757,7 +2757,7 @@
         "spec": {
           "id": 5,
           "title": "",
-          "description": "",
+          "description": "The metrics of the workers themselves, such as their slots, cache and task times, however they reach Flowrensic. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no worker sends its metrics and no worker scrape target is set.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2789,7 +2789,7 @@
         "spec": {
           "id": 6,
           "title": "Worker metrics items per second",
-          "description": "Items stored per second in this category.",
+          "description": "Items of worker metrics data stored per second, summed over all servers. An item is a sample, one number of a worker at one time. A refused request stores nothing and counts nothing. There is no good or bad value of its own: it follows how much your Temporal system does. Compare it with earlier days; a drop to 0 while your system works means this data stopped coming in. No data or a flat 0 when no worker sends its metrics and no worker scrape target is set.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2837,7 +2837,7 @@
         "spec": {
           "id": 7,
           "title": "Worker metrics bytes per second",
-          "description": "Bytes stored per second in this category.",
+          "description": "Bytes of worker metrics data stored per second, summed over all servers: the size of the request or of the answer read. There is no good or bad value of its own. Read it with the items per second: more bytes for each item means larger items. No data or a flat 0 when no worker sends its metrics and no worker scrape target is set.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2885,7 +2885,7 @@
         "spec": {
           "id": 8,
           "title": "Worker metrics stored size",
-          "description": "Size on disk of everything stored in this category.",
+          "description": "Size on disk of all worker metrics data stored, in bytes: the worker_metrics table. One value for the whole install, so several servers on one database show the same size. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing; the storage against its size limit is on the sustainability dashboard. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2933,7 +2933,7 @@
         "spec": {
           "id": 36,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestWorkerMetrics takes in the metrics of a worker, read from its own metrics endpoint and forwarded by the worker. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no worker forwards its metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2965,7 +2965,7 @@
         "spec": {
           "id": 37,
           "title": "IngestWorkerMetrics requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestWorkerMetrics per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no worker forwards its metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3013,7 +3013,7 @@
         "spec": {
           "id": 38,
           "title": "IngestWorkerMetrics response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestWorkerMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards its metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3061,7 +3061,7 @@
         "spec": {
           "id": 39,
           "title": "IngestWorkerMetrics responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestWorkerMetrics answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no worker forwards its metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3109,7 +3109,7 @@
         "spec": {
           "id": 40,
           "title": "IngestWorkerMetrics responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestWorkerMetrics answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3157,7 +3157,7 @@
         "spec": {
           "id": 62,
           "title": "",
-          "description": "",
+          "description": "The endpoint OTLP worker metrics push takes in worker metrics an OpenTelemetry exporter pushes to POST /v1/metrics, from the SDK of a worker or from a collector. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no exporter pushes worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3174,7 +3174,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## OTLP worker metrics push\nWorker metrics an OpenTelemetry exporter pushes to POST /v1/metrics, from a worker's SDK runtime or a collector (FPP-107-R12)."
+                "content": "## OTLP worker metrics push\nWorker metrics an OpenTelemetry exporter pushes to POST /v1/metrics, from a worker's SDK runtime or a collector."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -3189,7 +3189,7 @@
         "spec": {
           "id": 63,
           "title": "OTLP worker metrics push requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to OTLP worker metrics push per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no exporter pushes worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3237,7 +3237,7 @@
         "spec": {
           "id": 64,
           "title": "OTLP worker metrics push response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to OTLP worker metrics push were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no exporter pushes worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3285,7 +3285,7 @@
         "spec": {
           "id": 65,
           "title": "OTLP worker metrics push responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to OTLP worker metrics push answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no exporter pushes worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3333,7 +3333,7 @@
         "spec": {
           "id": 66,
           "title": "OTLP worker metrics push responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to OTLP worker metrics push answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3381,7 +3381,7 @@
         "spec": {
           "id": 67,
           "title": "",
-          "description": "",
+          "description": "The endpoint Prometheus remote write takes in worker metrics a Prometheus sends to POST /api/v1/write with remote write. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no Prometheus sends worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3398,7 +3398,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Prometheus remote write\nWorker metrics a Prometheus sends to POST /api/v1/write with remote write (FPP-107-R12)."
+                "content": "## Prometheus remote write\nWorker metrics a Prometheus sends to POST /api/v1/write with remote write."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -3413,7 +3413,7 @@
         "spec": {
           "id": 68,
           "title": "Prometheus remote write requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to Prometheus remote write per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no Prometheus sends worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3461,7 +3461,7 @@
         "spec": {
           "id": 69,
           "title": "Prometheus remote write response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to Prometheus remote write were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no Prometheus sends worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3509,7 +3509,7 @@
         "spec": {
           "id": 70,
           "title": "Prometheus remote write responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to Prometheus remote write answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no Prometheus sends worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3557,7 +3557,7 @@
         "spec": {
           "id": 71,
           "title": "Prometheus remote write responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to Prometheus remote write answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3605,7 +3605,7 @@
         "spec": {
           "id": 72,
           "title": "",
-          "description": "",
+          "description": "The server reads Prometheus endpoints of your own that hold worker metrics, such as the exporter of a collector, listed in FLOWRENSIC_WORKER_SCRAPE_TARGETS. The whole section has no data when that setting is empty.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3622,7 +3622,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Scrape worker metrics\nThe server reads the customer's Prometheus endpoints that hold worker metrics, such as a collector's exporter, set in FLOWRENSIC_WORKER_SCRAPE_TARGETS (FPP-107-R12)."
+                "content": "## Scrape worker metrics\nThe server reads the customer's Prometheus endpoints that hold worker metrics, such as a collector's exporter, set in FLOWRENSIC_WORKER_SCRAPE_TARGETS."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -3637,7 +3637,7 @@
         "spec": {
           "id": 73,
           "title": "Worker scrapes per second",
-          "description": "Reads of a customer endpoint of worker metrics.",
+          "description": "Reads of a worker metrics endpoint per second, whatever the result. Normal: steady, one for each target in each scrape interval. Bad: a drop to 0, the scraper stopped. No data when FLOWRENSIC_WORKER_SCRAPE_TARGETS is not set.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3685,7 +3685,7 @@
         "spec": {
           "id": 74,
           "title": "Worker scrape duration p95",
-          "description": "The p95 of the time one scrape took, in seconds.",
+          "description": "The time in seconds in which 95% of the scrapes of worker metrics ended, over the last few minutes. Normal: well under the scrape interval. Bad: close to the interval or above it. No data when FLOWRENSIC_WORKER_SCRAPE_TARGETS is not set, or when there was no scrape in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3733,7 +3733,7 @@
         "spec": {
           "id": 75,
           "title": "Worker scrape failures per second",
-          "description": "Scrapes that ended with an error.",
+          "description": "Scrapes of worker metrics per second that ended with an error, for example when the target could not be reached. Normal: 0. Bad: above 0, worker metrics are missing; the warn lines of the server name the target. No data when FLOWRENSIC_WORKER_SCRAPE_TARGETS is not set; with a target set it shows 0 from the first try.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3781,7 +3781,7 @@
         "spec": {
           "id": 76,
           "title": "",
-          "description": "",
+          "description": "The endpoint IngestClientCalls takes in the calls of a Temporal client that threw, such as a query that failed, sent by the Flowrensic client interceptor. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no client runs the Flowrensic client interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3798,7 +3798,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## IngestClientCalls\nThe queries a Temporal client made that threw, sent by the client interceptor (FPP-051)."
+                "content": "## IngestClientCalls\nThe queries a Temporal client made that threw, sent by the client interceptor."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -3813,7 +3813,7 @@
         "spec": {
           "id": 77,
           "title": "IngestClientCalls requests per second",
-          "description": "Calls answered, whatever the result.",
+          "description": "Requests to IngestClientCalls per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no client runs the Flowrensic client interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3861,7 +3861,7 @@
         "spec": {
           "id": 78,
           "title": "IngestClientCalls response latency p95 second",
-          "description": "The p95 of the time one call took to answer.",
+          "description": "The time in seconds in which 95% of the requests to IngestClientCalls were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no client runs the Flowrensic client interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3909,7 +3909,7 @@
         "spec": {
           "id": 79,
           "title": "IngestClientCalls responses ok per second",
-          "description": "Calls answered with ok.",
+          "description": "Requests to IngestClientCalls answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no client runs the Flowrensic client interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3957,7 +3957,7 @@
         "spec": {
           "id": 80,
           "title": "IngestClientCalls responses nok per second",
-          "description": "Calls answered with any code but ok.",
+          "description": "Requests to IngestClientCalls answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4005,7 +4005,7 @@
         "spec": {
           "id": 81,
           "title": "",
-          "description": "",
+          "description": "What the buffer of each worker lost and holds, one line for each env. A worker running the Flowrensic interceptor keeps what it has to send in a buffer and sends it to the server in batches. An env is one Temporal environment of the Flowrensic config. Each panel shows 0 for every env of the config from the start, and the whole section has no data when the config has no env.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4022,7 +4022,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Worker sends\nWhat the buffer of each worker lost and holds, by env: records it dropped, sends it gave up at their timeout, and records waiting to be sent (FPP-107-R15, R16)."
+                "content": "## Worker sends\nWhat the buffer of each worker lost and holds, by env: records it dropped, sends it gave up at their timeout, and records waiting to be sent."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -4037,7 +4037,7 @@
         "spec": {
           "id": 82,
           "title": "Records dropped per second",
-          "description": "Records a worker dropped from its buffer: past its limit, or in a send that failed or timed out.",
+          "description": "Records per second that workers dropped from their buffer, by env: the buffer was full, or a send failed or timed out. Normal: 0. Bad: above 0, data was lost, so findings may miss runs or attempts. No data only when the config has no env; each env shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4085,7 +4085,7 @@
         "spec": {
           "id": 83,
           "title": "Sends timed out per second",
-          "description": "Sends of a worker given up at their timeout.",
+          "description": "Sends per second that workers gave up at their timeout, by env. Normal: 0. Bad: above 0, the server answers too slowly or cannot be reached; see the request time of the ingest endpoints above. No data only when the config has no env; each env shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4133,7 +4133,7 @@
         "spec": {
           "id": 84,
           "title": "Records waiting to be sent",
-          "description": "Records waiting in the buffers of the workers of each env, as each worker last reported.",
+          "description": "Records waiting in the buffers of the workers of each env, a count, as each worker last reported. Normal: low, and back down after each send. Bad: a line that keeps growing; workers collect faster than they send, and records are dropped once the buffer is full. No data only when the config has no env; each env shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4181,7 +4181,7 @@
         "spec": {
           "id": 85,
           "title": "Answers 429 per second",
-          "description": "Reads a Cloud metrics endpoint refused because of its read limit (FPP-106-R08).",
+          "description": "Reads per second that Temporal Cloud refused with the answer 429, because its metrics endpoint allows only so many reads. Normal: 0. Bad: above 0, some engine metrics are missing and findings about the engine may come late. No data when no env is on Temporal Cloud; an env on Temporal Cloud shows 0 from its first read.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4229,7 +4229,7 @@
         "spec": {
           "id": 86,
           "title": "Cut answers per second",
-          "description": "Reads where Cloud sent only part of the metrics (FPP-106-R09).",
+          "description": "Reads per second where Temporal Cloud sent only part of the metrics. Normal: 0. Bad: above 0, some engine metrics are missing and findings about the engine may come late. No data when no env is on Temporal Cloud; an env on Temporal Cloud shows 0 from its first read.",
           "links": [],
           "data": {
             "kind": "QueryGroup",

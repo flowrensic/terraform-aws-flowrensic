@@ -22,6 +22,7 @@ locals {
     "storage-and-ingest" = "flowrensic-storage-and-ingest.json"
     "platform"           = "flowrensic-platform.json"
     "judging"            = "flowrensic-judging.json"
+    "sustainability"     = "flowrensic-sustainability.json"
   }
 
   monitoring_parameter_arns = [
@@ -444,7 +445,7 @@ resource "aws_ecs_service" "monitoring" {
   ]
 }
 
-# With grafana_cloud: a folder and the three dashboards in the Grafana of the
+# With grafana_cloud: a folder and the dashboards in the Grafana of the
 # provider the root module configures.
 resource "grafana_folder" "flowrensic" {
   count = local.monitoring_cloud

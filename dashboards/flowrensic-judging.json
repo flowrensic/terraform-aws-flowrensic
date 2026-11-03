@@ -37,7 +37,7 @@
         "spec": {
           "id": 1,
           "title": "",
-          "description": "",
+          "description": "Flags a run whose history grows past the number of events set. An analyzer is a check Flowrensic runs on each run it takes in, pulled from the engine or sent by a worker. The row shows how often this analyzer ran, how long one run took, the findings it raised and the runs of it that failed. When no run comes in, the panels show 0 and the time of one run has no data.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -69,7 +69,7 @@
         "spec": {
           "id": 2,
           "title": "history_growth analysis runs per second",
-          "description": "How often the analyzer ran.",
+          "description": "How many times per second the analyzer history_growth ran, whatever the result. It runs when a run comes in or changes, so it follows the work of your Temporal system. There is no good or bad value of its own; 0 while your system works means no runs come in. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -117,7 +117,7 @@
         "spec": {
           "id": 3,
           "title": "history_growth analysis runs duration p95",
-          "description": "The p95 of the time one run took, in seconds.",
+          "description": "The time in seconds in which 95% of the runs of the analyzer history_growth ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -165,7 +165,7 @@
         "spec": {
           "id": 4,
           "title": "history_growth findings detected",
-          "description": "Findings this analyzer detected in the time range shown.",
+          "description": "Findings the analyzer history_growth raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump, something new went wrong; open the findings in the Flowrensic UI to see which runs. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -213,7 +213,7 @@
         "spec": {
           "id": 5,
           "title": "history_growth analysis failures per second",
-          "description": "Runs that ended with an error.",
+          "description": "Runs of the analyzer history_growth per second that ended with an error. Normal: 0. Bad: above 0, some runs were not judged; the error lines of the server say why. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -261,7 +261,7 @@
         "spec": {
           "id": 6,
           "title": "",
-          "description": "",
+          "description": "Reports runs the engine closed as failed, and runs whose workflow task keeps failing. An analyzer is a check Flowrensic runs on each run it takes in, pulled from the engine or sent by a worker. The row shows how often this analyzer ran, how long one run took, the findings it raised and the runs of it that failed. When no run comes in, the panels show 0 and the time of one run has no data.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -293,7 +293,7 @@
         "spec": {
           "id": 7,
           "title": "failing_runs analysis runs per second",
-          "description": "How often the analyzer ran.",
+          "description": "How many times per second the analyzer failing_runs ran, whatever the result. It runs when a run comes in or changes, so it follows the work of your Temporal system. There is no good or bad value of its own; 0 while your system works means no runs come in. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -341,7 +341,7 @@
         "spec": {
           "id": 8,
           "title": "failing_runs analysis runs duration p95",
-          "description": "The p95 of the time one run took, in seconds.",
+          "description": "The time in seconds in which 95% of the runs of the analyzer failing_runs ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -389,7 +389,7 @@
         "spec": {
           "id": 9,
           "title": "failing_runs findings detected",
-          "description": "Findings this analyzer detected in the time range shown.",
+          "description": "Findings the analyzer failing_runs raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump, something new went wrong; open the findings in the Flowrensic UI to see which runs. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -437,7 +437,7 @@
         "spec": {
           "id": 10,
           "title": "failing_runs analysis failures per second",
-          "description": "Runs that ended with an error.",
+          "description": "Runs of the analyzer failing_runs per second that ended with an error. Normal: 0. Bad: above 0, some runs were not judged; the error lines of the server say why. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -485,7 +485,7 @@
         "spec": {
           "id": 11,
           "title": "",
-          "description": "",
+          "description": "Reports an open run that has made no progress for too long. An analyzer is a check Flowrensic runs on each run it takes in, pulled from the engine or sent by a worker. The row shows how often this analyzer ran, how long one run took, the findings it raised and the runs of it that failed. When no run comes in, the panels show 0 and the time of one run has no data.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -517,7 +517,7 @@
         "spec": {
           "id": 12,
           "title": "wedged_runs analysis runs per second",
-          "description": "How often the analyzer ran.",
+          "description": "How many times per second the analyzer wedged_runs ran, whatever the result. It runs when a run comes in or changes, so it follows the work of your Temporal system. There is no good or bad value of its own; 0 while your system works means no runs come in. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -565,7 +565,7 @@
         "spec": {
           "id": 13,
           "title": "wedged_runs analysis runs duration p95",
-          "description": "The p95 of the time one run took, in seconds.",
+          "description": "The time in seconds in which 95% of the runs of the analyzer wedged_runs ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -613,7 +613,7 @@
         "spec": {
           "id": 14,
           "title": "wedged_runs findings detected",
-          "description": "Findings this analyzer detected in the time range shown.",
+          "description": "Findings the analyzer wedged_runs raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump, something new went wrong; open the findings in the Flowrensic UI to see which runs. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -661,7 +661,7 @@
         "spec": {
           "id": 15,
           "title": "wedged_runs analysis failures per second",
-          "description": "Runs that ended with an error.",
+          "description": "Runs of the analyzer wedged_runs per second that ended with an error. Normal: 0. Bad: above 0, some runs were not judged; the error lines of the server say why. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -709,7 +709,7 @@
         "spec": {
           "id": 16,
           "title": "",
-          "description": "",
+          "description": "Reports a run that refuses every update it is sent. An analyzer is a check Flowrensic runs on each run it takes in, pulled from the engine or sent by a worker. The row shows how often this analyzer ran, how long one run took, the findings it raised and the runs of it that failed. When no run comes in, the panels show 0 and the time of one run has no data.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -741,7 +741,7 @@
         "spec": {
           "id": 17,
           "title": "refused_updates analysis runs per second",
-          "description": "How often the analyzer ran.",
+          "description": "How many times per second the analyzer refused_updates ran, whatever the result. It runs when a run comes in or changes, so it follows the work of your Temporal system. There is no good or bad value of its own; 0 while your system works means no runs come in. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -789,7 +789,7 @@
         "spec": {
           "id": 18,
           "title": "refused_updates analysis runs duration p95",
-          "description": "The p95 of the time one run took, in seconds.",
+          "description": "The time in seconds in which 95% of the runs of the analyzer refused_updates ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -837,7 +837,7 @@
         "spec": {
           "id": 19,
           "title": "refused_updates findings detected",
-          "description": "Findings this analyzer detected in the time range shown.",
+          "description": "Findings the analyzer refused_updates raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump, something new went wrong; open the findings in the Flowrensic UI to see which runs. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -885,7 +885,7 @@
         "spec": {
           "id": 20,
           "title": "refused_updates analysis failures per second",
-          "description": "Runs that ended with an error.",
+          "description": "Runs of the analyzer refused_updates per second that ended with an error. Normal: 0. Bad: above 0, some runs were not judged; the error lines of the server say why. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -933,7 +933,7 @@
         "spec": {
           "id": 21,
           "title": "",
-          "description": "",
+          "description": "Reports a closed run that left an activity unfinished. An analyzer is a check Flowrensic runs on each run it takes in, pulled from the engine or sent by a worker. The row shows how often this analyzer ran, how long one run took, the findings it raised and the runs of it that failed. When no run comes in, the panels show 0 and the time of one run has no data.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -965,7 +965,7 @@
         "spec": {
           "id": 22,
           "title": "dangling_work analysis runs per second",
-          "description": "How often the analyzer ran.",
+          "description": "How many times per second the analyzer dangling_work ran, whatever the result. It runs when a run comes in or changes, so it follows the work of your Temporal system. There is no good or bad value of its own; 0 while your system works means no runs come in. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1013,7 +1013,7 @@
         "spec": {
           "id": 23,
           "title": "dangling_work analysis runs duration p95",
-          "description": "The p95 of the time one run took, in seconds.",
+          "description": "The time in seconds in which 95% of the runs of the analyzer dangling_work ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1061,7 +1061,7 @@
         "spec": {
           "id": 24,
           "title": "dangling_work findings detected",
-          "description": "Findings this analyzer detected in the time range shown.",
+          "description": "Findings the analyzer dangling_work raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump, something new went wrong; open the findings in the Flowrensic UI to see which runs. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1109,7 +1109,7 @@
         "spec": {
           "id": 25,
           "title": "dangling_work analysis failures per second",
-          "description": "Runs that ended with an error.",
+          "description": "Runs of the analyzer dangling_work per second that ended with an error. Normal: 0. Bad: above 0, some runs were not judged; the error lines of the server say why. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1157,7 +1157,7 @@
         "spec": {
           "id": 26,
           "title": "",
-          "description": "",
+          "description": "Findings about the timeouts and retry limits of activities, judged from the activity attempts the worker interceptor sends: a timeout or a retry limit that does not fit what was seen, an activity close to its timeout, and an activity that timed out. The panel counts the findings of this kind. It shows 0 when no worker runs the Flowrensic interceptor, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1189,7 +1189,7 @@
         "spec": {
           "id": 27,
           "title": "Activity timeouts findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no worker runs the Flowrensic interceptor. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1237,7 +1237,7 @@
         "spec": {
           "id": 28,
           "title": "",
-          "description": "",
+          "description": "Judged from the deploys and what the pipeline wrote about them: two versions running side by side for too long, a deploy declared but not done, an old version still used during the rollout, runs that stopped after a deploy, and a deploy with no replay test or with a failed one. The panel counts the findings of this kind. It shows 0 when no pipeline reports its deploys, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1269,7 +1269,7 @@
         "spec": {
           "id": 29,
           "title": "Deploy findings findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no pipeline reports its deploys. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1317,7 +1317,7 @@
         "spec": {
           "id": 30,
           "title": "",
-          "description": "",
+          "description": "Judged from what the server did not receive: a namespace not pulled, an engine with no metrics, and data that stopped coming. The panel counts the findings of this kind. It shows 0 when nothing stopped, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1349,7 +1349,7 @@
         "spec": {
           "id": 31,
           "title": "Gaps findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when nothing stopped. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1397,7 +1397,7 @@
         "spec": {
           "id": 32,
           "title": "",
-          "description": "",
+          "description": "Judged from the metrics each worker exports through the SDK: slots, cache, task and replay times, activities, pollers and calls to the server. The panel counts the findings of this kind. It shows 0 when no worker metrics reach Flowrensic, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1429,7 +1429,7 @@
         "spec": {
           "id": 33,
           "title": "Worker health findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no worker metrics reach Flowrensic. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1477,7 +1477,7 @@
         "spec": {
           "id": 34,
           "title": "",
-          "description": "",
+          "description": "Judged from the metrics the Temporal server exports: task queues, rate limits, its database, workflow tasks, activity timeouts, history size and the history service. The panel counts the findings of this kind. It shows 0 when no engine metrics reach Flowrensic, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1509,7 +1509,7 @@
         "spec": {
           "id": 35,
           "title": "Engine health findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no engine metrics reach Flowrensic. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1557,7 +1557,7 @@
         "spec": {
           "id": 36,
           "title": "",
-          "description": "",
+          "description": "How often an activity call needed 2 or more attempts this week against last week, for each activity type and workflow type. The panel counts the findings of this kind. It shows 0 when no worker runs the Flowrensic interceptor, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1574,7 +1574,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Activity attempts\nHow often a call needed 2 or more attempts this week against last week, for each activity type and workflow type (FPP-020)."
+                "content": "## Activity attempts\nHow often a call needed 2 or more attempts this week against last week, for each activity type and workflow type."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -1589,7 +1589,7 @@
         "spec": {
           "id": 37,
           "title": "Activity attempts findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no worker runs the Flowrensic interceptor. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1637,7 +1637,7 @@
         "spec": {
           "id": 38,
           "title": "",
-          "description": "",
+          "description": "For each error type, how many retried calls succeeded later. The panel counts the findings of this kind. It shows 0 when no worker runs the Flowrensic interceptor, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1654,7 +1654,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Error retries\nFor each error type, how many retried calls succeeded later (FPP-050)."
+                "content": "## Error retries\nFor each error type, how many retried calls succeeded later."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -1669,7 +1669,7 @@
         "spec": {
           "id": 39,
           "title": "Error retries findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no worker runs the Flowrensic interceptor. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1717,7 +1717,7 @@
         "spec": {
           "id": 40,
           "title": "",
-          "description": "",
+          "description": "Long activities with no heartbeat timeout, and attempts lost when their worker died. The panel counts the findings of this kind. It shows 0 when no worker runs the Flowrensic interceptor, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1734,7 +1734,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Heartbeats\nLong activities with no heartbeat timeout, and attempts lost when their worker died (FPP-053)."
+                "content": "## Heartbeats\nLong activities with no heartbeat timeout, and attempts lost when their worker died."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -1749,7 +1749,7 @@
         "spec": {
           "id": 41,
           "title": "Heartbeats findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no worker runs the Flowrensic interceptor. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1797,7 +1797,7 @@
         "spec": {
           "id": 42,
           "title": "",
-          "description": "",
+          "description": "On a stuck run, the signals and updates that were never handled, and the queries that failed or timed out. The panel counts the findings of this kind. It shows 0 when no run is stuck, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1814,7 +1814,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Unhandled messages\nOn a stuck run, the signals and updates never handled and the queries that failed or timed out (FPP-051)."
+                "content": "## Unhandled messages\nOn a stuck run, the signals and updates never handled and the queries that failed or timed out."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -1829,7 +1829,7 @@
         "spec": {
           "id": 43,
           "title": "Unhandled messages findings detected",
-          "description": "Findings of this kind detected in the time range shown.",
+          "description": "Findings of this kind raised in the time range shown, a count. A finding is counted once, when it is first seen. Normal: 0, or a low number that fits your system. Bad: a jump; open the findings in the Flowrensic UI to see which runs or workers. It stays at 0 when no run is stuck. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1877,7 +1877,7 @@
         "spec": {
           "id": 44,
           "title": "",
-          "description": "",
+          "description": "When a rule that judges runs is new or changed, Flowrensic applies it once to the data already stored. This section shows the findings it took back as mistaken, and the stored runs it walked and skipped. Outside such a pass the panels stay at 0 or have no data.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1894,7 +1894,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Rules on stored data\nEach new or changed rule applied once to the data already stored (FPP-133): the findings it took back as mistaken, and the stored runs it walked and skipped."
+                "content": "## Rules on stored data\nEach new or changed rule applied once to the data already stored: the findings it took back as mistaken, and the stored runs it walked and skipped."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -1909,7 +1909,7 @@
         "spec": {
           "id": 45,
           "title": "Findings marked mistaken",
-          "description": "Findings a new rule version took back in the time range shown.",
+          "description": "Findings that a new version of a rule took back in the time range shown, a count. Normal: 0, or some right after a rule changed. Bad: many, the old rule raised wrong findings. No data or 0 when no rule changed in the time range.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1957,7 +1957,7 @@
         "spec": {
           "id": 46,
           "title": "Stored runs walked",
-          "description": "Stored runs a rule was applied to, per second, by rule.",
+          "description": "Stored runs per second that a new or changed rule was applied to, one line for each rule. Normal: a burst after a rule changes, then 0. Bad: a pass that never ends; see the job stored_rules on the sustainability dashboard. No data or 0 when no rule changed.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2005,7 +2005,7 @@
         "spec": {
           "id": 47,
           "title": "Stored runs skipped",
-          "description": "Stored runs a rule could not be applied to because their history is not stored, per second, by rule.",
+          "description": "Stored runs per second that a rule could not be applied to because their history is not stored, one line for each rule. Normal: 0 or low. Bad: high, many histories are gone, for example deleted by retention, so the new rule cannot judge those runs. No data or 0 when no rule changed.",
           "links": [],
           "data": {
             "kind": "QueryGroup",

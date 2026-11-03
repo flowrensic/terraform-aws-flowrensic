@@ -37,7 +37,7 @@
         "spec": {
           "id": 1,
           "title": "",
-          "description": "",
+          "description": "Each running Flowrensic server, called an instance here, and what it uses and logs. Each line is one instance, named by the address Prometheus reads its metrics at. The CPU and memory of the whole container against its limits are on the sustainability dashboard. The whole section has no data when Prometheus gets no metrics from the servers.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -69,7 +69,7 @@
         "spec": {
           "id": 2,
           "title": "Running instances",
-          "description": "One row for each instance the flowrensic job scrapes. Up is 1 when it answers and 0 when it does not.",
+          "description": "One row for each Flowrensic server that Prometheus scrapes: its address, its host name, up, the CPU cores it uses and its memory in bytes. Up comes from Prometheus: 1 when the server answered the last scrape, 0 when it did not. Normal: every server you run, with up 1. Bad: up 0, the server is down or cannot be reached; its host name stays for an hour. No data when Prometheus does not scrape the servers under the job name flowrensic, for example when the metrics are only pushed over OTLP.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -222,7 +222,7 @@
         "spec": {
           "id": 3,
           "title": "CPU load by instance",
-          "description": "CPU cores each instance uses.",
+          "description": "CPU cores each server process uses: 1 is one full core. It counts the Flowrensic process only, not Postgres or other containers. Normal: low, with short peaks while it pulls or judges runs. Bad: it stays close to the cores the server has; see the CPU against the limit on the sustainability dashboard. No data when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -270,7 +270,7 @@
         "spec": {
           "id": 4,
           "title": "Memory used by instance",
-          "description": "Memory the Go runtime of each instance holds.",
+          "description": "Memory the Go runtime of each server holds, in bytes. Normal: up and down around a steady level. Bad: it keeps climbing and does not come back down, a leak; the memory of the container against its limit is on the sustainability dashboard. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -318,7 +318,7 @@
         "spec": {
           "id": 5,
           "title": "Network data volume per second by instance (total)",
-          "description": "Bytes read plus bytes written, by instance.",
+          "description": "Bytes per second each server read and wrote on its main listener together: the API, the UI and the history downloads. The metrics endpoint is not counted. There is no good or bad value of its own; it follows the requests. A jump with no more requests means larger requests or answers. No data when Prometheus gets no metrics from the server, or before the first request.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -366,7 +366,7 @@
         "spec": {
           "id": 6,
           "title": "Network data volume per second by instance (in / out)",
-          "description": "Bytes read and bytes written, by instance.",
+          "description": "The same bytes as the panel on the left, split in two lines: bytes read in requests and bytes written in answers, per second. Normal: most data comes in from the workers and goes out to the UI. Bad: a line that keeps climbing with no more requests. No data when Prometheus gets no metrics from the server, or before the first request.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -430,7 +430,7 @@
         "spec": {
           "id": 7,
           "title": "Requests per second to instance",
-          "description": "HTTP requests each instance answered.",
+          "description": "HTTP requests each server answered per second on its main listener, whatever the answer: the API, the UI and the history downloads. There is no good or bad value of its own; a drop to 0 while workers run means they stopped sending. No data when Prometheus gets no metrics from the server, or before the first request.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -478,7 +478,7 @@
         "spec": {
           "id": 8,
           "title": "Response latency p95 by instance",
-          "description": "The p95 of the time each instance took to answer a Connect call.",
+          "description": "The time in seconds in which 95% of the API calls of each server were answered, over the last few minutes. It counts the calls of the API only, not the pages of the UI or the history downloads. Normal: well under 1 second, the request time limit by default; the limit is drawn for each kind of request on the sustainability dashboard. Bad: a line that climbs or stays high. No data when there was no API call in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -526,7 +526,7 @@
         "spec": {
           "id": 9,
           "title": "Errors per second by instance",
-          "description": "Log lines each instance wrote at error.",
+          "description": "Log lines at level error that each server wrote per second. Normal: 0. Bad: above 0, something failed; read the log of that server for the error. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -574,7 +574,7 @@
         "spec": {
           "id": 10,
           "title": "Warns per second by instance",
-          "description": "Log lines each instance wrote at warn.",
+          "description": "Log lines at level warn that each server wrote per second. Normal: 0 or a few now and then, for example when an engine could not be reached once. Bad: a steady or growing line; read the log of that server. No data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -622,7 +622,7 @@
         "spec": {
           "id": 11,
           "title": "Goroutines leak detector by instance",
-          "description": "A line that keeps climbing and does not come back down is a leak.",
+          "description": "How many goroutines each server runs, a count. A goroutine is a light thread of the Go runtime. Normal: up and down around a steady level as work comes and goes. Bad: a line that keeps climbing and does not come back down, a leak. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -668,7 +668,7 @@
         "spec": {
           "id": 12,
           "title": "",
-          "description": "",
+          "description": "How much the database and the blob storage hold, and what retention deleted. The database is Postgres. The blob storage is where the history files are kept: a folder, a MinIO bucket or an S3 bucket. Each panel is one value for the whole install, so several servers on one database show the same number. The whole section has no data when Prometheus gets no metrics from the servers.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -700,7 +700,7 @@
         "spec": {
           "id": 13,
           "title": "Database storage used volume",
-          "description": "Size of the Postgres database.",
+          "description": "Size of the Postgres database, in bytes, as Postgres reports it. Normal: it grows with use and levels off once retention deletes old data. Bad: it keeps growing toward the store size limit, 10 GB by default for the database and the history files together; the sustainability dashboard draws that limit. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -748,7 +748,7 @@
         "spec": {
           "id": 14,
           "title": "Blob storage used volume",
-          "description": "Size of the history files or objects.",
+          "description": "Size of the history files or objects, in bytes, from the note the database keeps of each file, so the bucket is not listed. Normal: it grows with use and levels off once retention deletes old runs. Bad: it keeps growing toward the store size limit, which counts the database and the history files together. No data when the server could not read the size, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -796,7 +796,7 @@
         "spec": {
           "id": 15,
           "title": "Database storage total records",
-          "description": "Rows in the database, over every kind.",
+          "description": "Rows in the database, a count: runs, findings, activity attempts and engine samples together. There is no good or bad value of its own; it follows use. Bad: it keeps growing and never levels off, so retention may not keep up. No data when the server could not read the counts, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -844,7 +844,7 @@
         "spec": {
           "id": 16,
           "title": "Blob storage used total items",
-          "description": "History files or objects the blob backend holds.",
+          "description": "History files or objects the blob storage holds, a count, about one for each stored run. There is no good or bad value of its own; it follows the runs stored. Bad: it keeps growing and never levels off, so retention may not keep up. No data when the server could not read the count, which it logs as a warning.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -892,7 +892,7 @@
         "spec": {
           "id": 17,
           "title": "Database evicted items",
-          "description": "Rows retention deleted in the time range shown.",
+          "description": "Rows retention deleted from the database in the time range shown, a count, of every kind, for their age or for the size limit. Normal: some, once data reaches its age limit. Bad: a jump, the size limit made retention delete data early; the server logs a warning for each such deletion. No data only when Prometheus gets no metrics from the server; it shows 0 from the start.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -940,7 +940,7 @@
         "spec": {
           "id": 18,
           "title": "Blob evicted items",
-          "description": "History objects retention deleted in the time range shown, one for each run.",
+          "description": "History objects retention deleted in the time range shown, a count, one for each run it deleted. Normal: some, once runs reach their age limit. Bad: a jump, the size limit made retention delete runs early. No data or 0 until retention deleted its first run.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -976,838 +976,6 @@
               "fieldConfig": {
                 "defaults": {
                   "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-19": {
-        "kind": "Panel",
-        "spec": {
-          "id": 19,
-          "title": "",
-          "description": "",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "text",
-            "version": "",
-            "spec": {
-              "options": {
-                "mode": "markdown",
-                "content": "## Sustainability\nWhether each server keeps up with its work (FPP-135): its load against its limits, the database connections, the calls and jobs, and the storage against its size limit."
-              },
-              "fieldConfig": {
-                "defaults": {},
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-20": {
-        "kind": "Panel",
-        "spec": {
-          "id": 20,
-          "title": "CPU used against the CPU limit by instance",
-          "description": "CPU cores each instance uses, and the cores its cgroup may use. A server with no CPU limit shows the use alone.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance) (rate(flowrensic_cpu_time_seconds_total[$__rate_interval]))",
-                        "legendFormat": "{{instance}} used"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_cpu_limit)",
-                        "legendFormat": "{{instance}} limit"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_cpu_threshold)",
-                        "legendFormat": "{{instance}} threshold"
-                      }
-                    },
-                    "refId": "C",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-21": {
-        "kind": "Panel",
-        "spec": {
-          "id": 21,
-          "title": "Memory used against the memory limit by instance",
-          "description": "Memory each instance uses, and the memory its cgroup may use. A server with no memory limit shows the use alone.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance) (flowrensic_memory_used_bytes)",
-                        "legendFormat": "{{instance}} used"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_memory_limit_bytes)",
-                        "legendFormat": "{{instance}} limit"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_memory_threshold_bytes)",
-                        "legendFormat": "{{instance}} threshold"
-                      }
-                    },
-                    "refId": "C",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "bytes"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-22": {
-        "kind": "Panel",
-        "spec": {
-          "id": 22,
-          "title": "Times throttled per second by instance",
-          "description": "How often the cgroup of each instance reached its CPU limit and was held back.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance) (rate(flowrensic_cpu_throttled_total[$__rate_interval]))",
-                        "legendFormat": "{{instance}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-23": {
-        "kind": "Panel",
-        "spec": {
-          "id": 23,
-          "title": "Calls running now by kind of call by instance",
-          "description": "Calls each instance is answering right now. A line that keeps going up means calls arrive faster than the instance finishes them.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance, procedure) (flowrensic_rpc_requests_active)",
-                        "legendFormat": "{{instance}} {{procedure}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_rpc_requests_active_threshold)",
-                        "legendFormat": "{{instance}} threshold"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-24": {
-        "kind": "Panel",
-        "spec": {
-          "id": 24,
-          "title": "Database connections in use and free by pool by instance",
-          "description": "Connections of each Postgres pool, in use and free.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance, pool, state) (flowrensic_db_pool_connections)",
-                        "legendFormat": "{{instance}} {{pool}} {{state}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-25": {
-        "kind": "Panel",
-        "spec": {
-          "id": 25,
-          "title": "Time waited for a connection per second by pool by instance",
-          "description": "Seconds queries waited for a free connection of the pool, per second.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance, pool) (rate(flowrensic_db_pool_wait_time_seconds_total[$__rate_interval]))",
-                        "legendFormat": "{{instance}} {{pool}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_db_pool_wait_threshold)",
-                        "legendFormat": "{{instance}} threshold"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "s"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-26": {
-        "kind": "Panel",
-        "spec": {
-          "id": 26,
-          "title": "Connections of all servers against max_connections",
-          "description": "Connections every Flowrensic server holds on Postgres together, and the max_connections of Postgres.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max(flowrensic_db_connections)",
-                        "legendFormat": "connections"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max(flowrensic_db_connections_limit)",
-                        "legendFormat": "max_connections"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max(flowrensic_db_connections_threshold)",
-                        "legendFormat": "threshold"
-                      }
-                    },
-                    "refId": "C",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-27": {
-        "kind": "Panel",
-        "spec": {
-          "id": 27,
-          "title": "Storage used against the size limit",
-          "description": "The database and the history files together, and the size limit of the store.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum(max by (backend) (flowrensic_storage_bytes))",
-                        "legendFormat": "used"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max(flowrensic_storage_limit_bytes)",
-                        "legendFormat": "limit"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "bytes"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-28": {
-        "kind": "Panel",
-        "spec": {
-          "id": 28,
-          "title": "Work waiting by job by instance",
-          "description": "Work each job counts as waiting. A line that keeps growing means the job falls behind.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance, task, scope) (flowrensic_job_waiting)",
-                        "legendFormat": "{{instance}} {{task}} {{scope}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_job_waiting_threshold)",
-                        "legendFormat": "{{instance}} threshold"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-29": {
-        "kind": "Panel",
-        "spec": {
-          "id": 29,
-          "title": "Last pass against the interval by job by instance",
-          "description": "How long the last pass of each job took, divided by its interval. Above 1 a pass took longer than its interval.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance, task, scope) (flowrensic_job_pass_duration_seconds) / sum by (instance, task, scope) (flowrensic_job_interval_seconds)",
-                        "legendFormat": "{{instance}} {{task}} {{scope}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "short"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-30": {
-        "kind": "Panel",
-        "spec": {
-          "id": 30,
-          "title": "The largest tables by size",
-          "description": "Size on disk of each of the largest tables of the database, with its indexes.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (table) (flowrensic_storage_table_bytes)",
-                        "legendFormat": "{{table}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "bytes"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-31": {
-        "kind": "Panel",
-        "spec": {
-          "id": 31,
-          "title": "Calls refused per second by priority by instance",
-          "description": "Calls the server refused while it sheds load, by priority: urgent, normal and bulk.",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "sum by (instance, priority) (rate(flowrensic_rpc_refused_total[$__rate_interval]))",
-                        "legendFormat": "{{instance}} {{priority}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "reqps"
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
-      "panel-32": {
-        "kind": "Panel",
-        "spec": {
-          "id": 32,
-          "title": "Call time p95 by kind of call by instance",
-          "description": "The time 95% of the calls of each kind took at most, against the call time limit, which is checked for each kind (FLOWRENSIC_LIMIT_CALL_TIME).",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "histogram_quantile(0.95, sum by (le, instance, procedure) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
-                        "legendFormat": "{{instance}} {{procedure}}"
-                      }
-                    },
-                    "refId": "A",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "",
-                      "version": "v0",
-                      "spec": {
-                        "expr": "max by (instance) (flowrensic_rpc_request_duration_threshold_seconds)",
-                        "legendFormat": "{{instance}} limit"
-                      }
-                    },
-                    "refId": "B",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "",
-            "spec": {
-              "options": {},
-              "fieldConfig": {
-                "defaults": {
-                  "unit": "s"
                 },
                 "overrides": []
               }
@@ -2051,188 +1219,6 @@
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-18"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 63,
-              "width": 24,
-              "height": 3,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-19"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 66,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-20"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 66,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-21"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 73,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-22"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 73,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-23"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 87,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-24"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 87,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-25"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 94,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-26"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 94,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-27"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 101,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-28"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 101,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-29"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 108,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-30"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 12,
-              "y": 80,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-31"
-              }
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "x": 0,
-              "y": 80,
-              "width": 12,
-              "height": 7,
-              "element": {
-                "kind": "ElementReference",
-                "name": "panel-32"
               }
             }
           }

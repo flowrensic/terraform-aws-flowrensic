@@ -196,8 +196,9 @@ With monitoring ecs, one more ECS service runs Prometheus and Grafana. Open
 Grafana at https://grafana. and ui_name, such as
 https://grafana.flowrensic.internal.example.com, and log in as admin with the
 password in grafana_admin_password_parameter. The same IP ranges and security
-groups as the UI reach it. The folder Flowrensic holds three dashboards: Flowrensic
-storage and ingest, Flowrensic platform and Flowrensic judging.
+groups as the UI reach it. The folder Flowrensic holds four dashboards: Flowrensic
+storage and ingest, Flowrensic platform, Flowrensic judging and Flowrensic
+sustainability.
 
 Prometheus finds every server task through Cloud Map, scrapes it every 15 seconds,
 and keeps 15 days of data on an encrypted EFS file system. Prometheus does not
@@ -208,7 +209,7 @@ again, and the history kept so far is lost.
 
 With monitoring grafana_cloud, a small Prometheus in agent mode runs beside the
 server, scrapes it, and sends what it scrapes to your Grafana Cloud, with the label
-flowrensic_deploy set to name. The module also puts the three dashboards into the
+flowrensic_deploy set to name. The module also puts the four dashboards into the
 folder grafana_cloud_folder of that Grafana. For that your root module configures
 the grafana provider with the URL of your stack and its ID in stack_id, and terraform runs with a service
 account token in GRAFANA_AUTH. The service account needs the Admin role: with Editor,
