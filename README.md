@@ -3,7 +3,8 @@
 This folder is a Terraform module. It runs Flowrensic in a VPC you already have:
 
 - one server on ECS Fargate
-- an RDS Postgres database, db.t4g.micro in one zone, with backups kept 7 days
+- in full mode, the default, an RDS Postgres database, db.t4g.small in one zone, with
+  backups kept 7 days. In standalone mode, no RDS. See Modes below.
 - a private S3 bucket for the histories
 - a public load balancer for the UI and API, open only to the IP ranges you give,
   when you give some
@@ -32,6 +33,28 @@ The module is on the Terraform Registry. In your root module:
 Each Flowrensic release has a module version with the same number. Give the same
 number to version and image_version.
 
+## Modes
+
+The setting mode picks one of two:
+
+- full, the default. The server runs the image flowrensic/flowrensic and keeps its
+  data in an RDS Postgres database. The data stays over restarts and updates.
+- standalone. The server runs the image flowrensic/flowrensic-standalone, which
+  runs its own Postgres inside the task. There is no RDS and no volume, so the
+  database is lost each time the task stops: on every update, restart or crash. A
+  new task starts with an empty database and pulls again what Temporal still keeps.
+  The histories still go to the S3 bucket and stay there. It costs less, and it is
+  the way to start from zero.
+
+Standalone runs exactly one task. The count is fixed at 1 and an update stops the
+old task before the new one starts. Do not change the count by hand: a second task
+would have a database of its own.
+
+Moving from full to standalone is one apply, and it deletes the RDS database and
+its data, with no final snapshot. Moving back makes a new, empty RDS database. In
+standalone mode leave out database_subnet_ids and database_instance_class, or the
+plan fails.
+
 ## Before the first apply
 
 1. Copy example/secrets.env.example to .flowrensic-aws-secrets.env in your repo,
@@ -47,8 +70,8 @@ number to version and image_version.
    state.
 3. Run terraform apply in your root module.
 
-The database password is made by RDS and kept by RDS in Secrets Manager. Nobody
-types it, and it is not in the state either.
+In full mode the database password is made by RDS and kept by RDS in Secrets
+Manager. Nobody types it, and it is not in the state either.
 
 ## Settings
 
@@ -59,7 +82,6 @@ Needed:
 - vpc_id: the VPC to run in.
 - public_subnet_ids: public subnets in two zones. The public load balancers run
   there, and the server too unless you set server_subnet_ids.
-- database_subnet_ids: subnets in two zones for the database.
 - ui_name: the name of the UI and API, such as flowrensic.internal.example.com.
 - ingest_name: the public name CI jobs send to, such as flowrensic-ingest.example.com.
 - dns_zone: the public Route 53 zone both names are in.
@@ -70,15 +92,23 @@ Needed:
 With a default:
 
 - name: the start of every resource name, flowrensic.
-- image: flowrensic/flowrensic.
+- mode: full or standalone, full by default. See Modes above.
+- database_subnet_ids: in full mode, subnets in two zones for the database. Needed
+  in full mode, and not allowed in standalone mode.
+- image: flowrensic/flowrensic in full mode and flowrensic/flowrensic-standalone in
+  standalone mode.
 - server_subnet_ids: private subnets for the server, empty by default. See
   Networking below.
-- server_cpu and server_memory: the size of the server task, 512 and 1024 by
-  default, which is 0.5 vCPU and 1 GB. Fargate allows only some pairs: one vCPU,
-  1024, needs at least 2048 of memory. A server that pulls many histories needs
-  more CPU.
-- database_instance_class: the RDS instance class, db.t4g.small by default, which
-  has 2 GB of memory.
+- server_cpu and server_memory: the size of the server task. In full mode 512 and
+  1024 by default, which is 0.5 vCPU and 1 GB. In standalone mode 1024 and 4096,
+  1 vCPU and 4 GB, since Postgres runs in the task too. Fargate allows only some
+  pairs: one vCPU, 1024, needs at least 2048 of memory. A server that pulls many
+  histories needs more CPU.
+- ephemeral_storage_gib: the disk of the server task, from 21 to 200 GiB. In
+  standalone mode the database is kept there, 50 by default. In full mode the
+  Fargate default of 20.
+- database_instance_class: in full mode, the RDS instance class, db.t4g.small by
+  default, which has 2 GB of memory. Not allowed in standalone mode.
 - database_pool_size and database_call_pool_size: the most database connections
   one server holds for the ingest calls and background jobs, 24 by default, and
   for the UI and API calls, 6 by default. A deploy runs two servers for a while,
@@ -94,9 +124,6 @@ With a default:
   a Temporal Cloud key that the env list reads through temporalReadApiKeyVariable, or a
   key that can write, read through temporalWriteApiKeyVariable, which the Remediate
   button needs.
-- reset_database_on_deploy: false by default. When true, a server of another
-  image_version empties the database before it starts, and pulls again what Temporal
-  still keeps. A restart of the same version keeps the data. The history files stay.
 - monitoring: ecs, grafana_cloud or none, ecs by default. See Monitoring below.
 - grafana_admin_password_parameter: with ecs, the SSM parameter that holds the
   password of the Grafana user admin. Needed with ecs.
@@ -129,8 +156,8 @@ endpoint, and does not change your route tables. You pick one of two ways.
   runs there with no public IP. The module does not check the routes, so a subnet
   with no way out leaves the server unable to pull its image.
 
-Either way the load balancers stay in public_subnet_ids and the database in
-database_subnet_ids. With monitoring ecs, the Prometheus and Grafana task runs in
+Either way the load balancers stay in public_subnet_ids and the database, in full
+mode, in database_subnet_ids. With monitoring ecs, the Prometheus and Grafana task runs in
 the same subnets as the server, the same way, and so do its EFS mount targets.
 
 ## Your own load balancers
@@ -202,7 +229,8 @@ makes a new certificate.
 
 Change version and image_version to the new release and run terraform init and
 terraform apply. The old server stops before the new
-one starts, so Flowrensic is away for a minute or two.
+one starts, so Flowrensic is away for a minute or two. In standalone mode the new
+server starts with an empty database.
 
 ## When a key changes
 
@@ -214,7 +242,7 @@ key is used:
 
 ## The database password
 
-RDS changes the password once a year. The server reads it only when it starts, so
+In full mode, RDS changes the password once a year. The server reads it only when it starts, so
 after RDS changes it the server cannot open new database connections. Start it
 again with:
 
@@ -222,12 +250,13 @@ again with:
 
 ## Destroy
 
-terraform destroy removes everything, the histories in the bucket too. The database
-has no deletion protection and no final snapshot.
+terraform destroy removes everything, the histories in the bucket too. The RDS
+database has no deletion protection and no final snapshot.
 
 ## Alarms
 
-The module puts CloudWatch alarms on the server and the database and sends them to
+The module puts CloudWatch alarms on the server, and in full mode on the RDS
+database, and sends them to
 the SNS topic of alarm_topic_arn, a topic you already have, such as the one your
 other alarms go to. The policy of that topic has to let events.amazonaws.com
 publish, for the alarm on a stopped server task. Without alarm_topic_arn the
@@ -240,7 +269,7 @@ topic either way. An alarm fires when:
 - the server answers 5 or more 5xx in 5 minutes
 - the server task uses more than 80% of its memory for 3 minutes, or of its CPU
   for 10 minutes
-- the database has less than 100 MB free memory or uses more than 50 MB of swap
+- in full mode, the database has less than 100 MB free memory or uses more than 50 MB of swap
   for 15 minutes
 - the database, of a db.t class, has fewer than 5 CPU credits left
 - the database has less than 10% of its storage free

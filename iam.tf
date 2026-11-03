@@ -25,9 +25,12 @@ data "aws_iam_policy_document" "execution_secrets" {
     actions   = ["ssm:GetParameters"]
     resources = concat([local.envs_parameter_arn], values(local.secret_parameter_arns), local.monitoring_parameter_arns)
   }
-  statement {
-    actions   = ["secretsmanager:GetSecretValue"]
-    resources = [aws_db_instance.this.master_user_secret[0].secret_arn]
+  dynamic "statement" {
+    for_each = aws_db_instance.this
+    content {
+      actions   = ["secretsmanager:GetSecretValue"]
+      resources = [statement.value.master_user_secret[0].secret_arn]
+    }
   }
 }
 

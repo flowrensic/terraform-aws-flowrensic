@@ -18,9 +18,28 @@ variable "public_subnet_ids" {
   type        = list(string)
 }
 
+variable "mode" {
+  description = "full runs the server with an RDS Postgres database. standalone runs the flowrensic-standalone image, which holds its own Postgres, with no RDS and no volume, so its data is lost when the task stops."
+  type        = string
+  default     = "full"
+  validation {
+    condition     = contains(["full", "standalone"], var.mode)
+    error_message = "mode is full or standalone."
+  }
+}
+
 variable "database_subnet_ids" {
-  description = "Subnets in at least two zones, for the database."
+  description = "With mode full: subnets in at least two zones, for the database."
   type        = list(string)
+  default     = []
+  validation {
+    condition     = var.mode != "full" || length(var.database_subnet_ids) > 0
+    error_message = "full mode needs database_subnet_ids, subnets in two zones for the database."
+  }
+  validation {
+    condition     = var.mode != "standalone" || length(var.database_subnet_ids) == 0
+    error_message = "database_subnet_ids is not used in standalone mode, which has no RDS. Leave it out."
+  }
 }
 
 variable "ui_name" {
@@ -60,27 +79,41 @@ variable "name" {
 }
 
 variable "image" {
-  description = "The Flowrensic image, without the tag."
+  description = "The Flowrensic image, without the tag. Null is flowrensic/flowrensic in full mode and flowrensic/flowrensic-standalone in standalone mode."
   type        = string
-  default     = "flowrensic/flowrensic"
+  default     = null
 }
 
 variable "server_cpu" {
-  description = "The CPU units of the server task: 1024 is one vCPU. Fargate allows 256, 512, 1024, 2048, 4096, 8192 and 16384."
+  description = "The CPU units of the server task: 1024 is one vCPU. Fargate allows 256, 512, 1024, 2048, 4096, 8192 and 16384. Null is 512 in full mode and 1024 in standalone mode."
   type        = number
-  default     = 512
+  default     = null
 }
 
 variable "server_memory" {
-  description = "The memory of the server task in MiB. Fargate allows only some sizes for each server_cpu, 2048 to 8192 for 1024."
+  description = "The memory of the server task in MiB. Fargate allows only some sizes for each server_cpu, 2048 to 8192 for 1024. Null is 1024 in full mode and 4096 in standalone mode, where Postgres runs in the task too."
   type        = number
-  default     = 1024
+  default     = null
+}
+
+variable "ephemeral_storage_gib" {
+  description = "The Fargate ephemeral storage of the server task in GiB, from 21 to 200. Null is 50 in standalone mode, where the database is kept there, and the Fargate default of 20 in full mode."
+  type        = number
+  default     = null
+  validation {
+    condition     = var.ephemeral_storage_gib == null || try(var.ephemeral_storage_gib >= 21 && var.ephemeral_storage_gib <= 200 && floor(var.ephemeral_storage_gib) == var.ephemeral_storage_gib, false)
+    error_message = "ephemeral_storage_gib is a whole number from 21 to 200, or null."
+  }
 }
 
 variable "database_instance_class" {
-  description = "The RDS instance class of the database."
+  description = "With mode full: the RDS instance class of the database. Null is db.t4g.small."
   type        = string
-  default     = "db.t4g.small"
+  default     = null
+  validation {
+    condition     = var.mode != "standalone" || var.database_instance_class == null
+    error_message = "database_instance_class is not used in standalone mode, which has no RDS. Leave it out."
+  }
 }
 
 variable "database_pool_size" {
@@ -133,12 +166,6 @@ variable "secret_parameters" {
   description = "More variables of the server, each read from the SSM parameter it names."
   type        = map(string)
   default     = {}
-}
-
-variable "reset_database_on_deploy" {
-  description = "Empty the database when a server of another image_version starts, FLOWRENSIC_RESET_DATABASE_ON_DEPLOY. The history files stay."
-  type        = bool
-  default     = false
 }
 
 variable "monitoring" {

@@ -1,4 +1,5 @@
-# CloudWatch alarms on the critical metrics of the server and the database.
+# CloudWatch alarms on the critical metrics of the server, and of the RDS
+# database in full mode.
 # Each alarm, and each server task that stops by itself, goes to the SNS topic
 # of alarm_topic_arn. Without one, the module makes a topic of its own and the
 # addresses of alarm_emails get it by email.
@@ -16,7 +17,7 @@ locals {
   )
 
   server_dimensions   = { ClusterName = aws_ecs_cluster.this.name, ServiceName = aws_ecs_service.server.name }
-  database_dimensions = { DBInstanceIdentifier = aws_db_instance.this.identifier }
+  database_dimensions = { DBInstanceIdentifier = var.name }
 }
 
 resource "aws_sns_topic" "alarms" {
@@ -155,6 +156,7 @@ resource "aws_cloudwatch_metric_alarm" "server_cpu" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_memory" {
+  count               = local.full
   alarm_name          = "${var.name}-database-memory"
   alarm_description   = "The Flowrensic database has less than 100 MB of free memory for 15 minutes."
   namespace           = "AWS/RDS"
@@ -171,6 +173,7 @@ resource "aws_cloudwatch_metric_alarm" "database_memory" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_swap" {
+  count               = local.full
   alarm_name          = "${var.name}-database-swap"
   alarm_description   = "The Flowrensic database uses more than 50 MB of swap for 15 minutes, so its memory is too small."
   namespace           = "AWS/RDS"
@@ -187,7 +190,7 @@ resource "aws_cloudwatch_metric_alarm" "database_swap" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_cpu_credits" {
-  count               = startswith(var.database_instance_class, "db.t") ? 1 : 0
+  count               = local.full == 1 && startswith(local.database_class, "db.t") ? 1 : 0
   alarm_name          = "${var.name}-database-cpu-credits"
   alarm_description   = "The Flowrensic database has used almost all its CPU credits, so it runs on paid surplus credits."
   namespace           = "AWS/RDS"
@@ -204,6 +207,7 @@ resource "aws_cloudwatch_metric_alarm" "database_cpu_credits" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_storage" {
+  count               = local.full
   alarm_name          = "${var.name}-database-storage"
   alarm_description   = "The Flowrensic database has less than 10% of its storage free."
   namespace           = "AWS/RDS"
@@ -213,13 +217,14 @@ resource "aws_cloudwatch_metric_alarm" "database_storage" {
   period              = 300
   evaluation_periods  = 1
   comparison_operator = "LessThanThreshold"
-  threshold           = aws_db_instance.this.allocated_storage * 1024 * 1024 * 1024 / 10
+  threshold           = aws_db_instance.this[0].allocated_storage * 1024 * 1024 * 1024 / 10
   treat_missing_data  = "notBreaching"
   alarm_actions       = local.alarm_actions
   ok_actions          = local.alarm_actions
 }
 
 resource "aws_cloudwatch_metric_alarm" "database_cpu" {
+  count               = local.full
   alarm_name          = "${var.name}-database-cpu"
   alarm_description   = "The Flowrensic database uses more than 80% of its CPU for 15 minutes."
   namespace           = "AWS/RDS"

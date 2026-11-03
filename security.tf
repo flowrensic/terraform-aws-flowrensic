@@ -147,13 +147,15 @@ resource "aws_vpc_security_group_egress_rule" "ingest_to_server" {
 }
 
 resource "aws_security_group" "database" {
+  count       = local.full
   name        = "${var.name}-database"
   description = "The Flowrensic database: 5432 from the server only."
   vpc_id      = var.vpc_id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "database" {
-  security_group_id            = aws_security_group.database.id
+  count                        = local.full
+  security_group_id            = aws_security_group.database[0].id
   referenced_security_group_id = aws_security_group.server.id
   ip_protocol                  = "tcp"
   from_port                    = 5432

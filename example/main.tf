@@ -24,13 +24,19 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/flowrensic/aws"
-  version = "0.6.37"
+  version = "0.6.38"
 
-  region              = "eu-west-1"
-  image_version       = "0.6.4"
-  vpc_id              = "vpc-REPLACE"
-  public_subnet_ids   = ["subnet-PUBLIC-A", "subnet-PUBLIC-B"]
+  region            = "eu-west-1"
+  image_version     = "0.6.4"
+  vpc_id            = "vpc-REPLACE"
+  public_subnet_ids = ["subnet-PUBLIC-A", "subnet-PUBLIC-B"]
+
+  # full, the default, keeps the data in an RDS database in these subnets.
+  mode                = "full"
   database_subnet_ids = ["subnet-PRIVATE-A", "subnet-PRIVATE-B"]
+  # Or standalone: no RDS, Postgres inside the one task, and the data is lost when
+  # the task stops. Leave out database_subnet_ids then.
+  # mode = "standalone"
 
   # When the VPC has a NAT, the server can run in private subnets with no public IP.
   # server_subnet_ids = ["subnet-PRIVATE-A", "subnet-PRIVATE-B"]

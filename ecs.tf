@@ -6,10 +6,17 @@ resource "aws_ecs_task_definition" "server" {
   family                   = var.name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = tostring(var.server_cpu)
-  memory                   = tostring(var.server_memory)
+  cpu                      = tostring(local.server_cpu)
+  memory                   = tostring(local.server_memory)
   execution_role_arn       = aws_iam_role.execution.arn
   task_role_arn            = aws_iam_role.task.arn
+
+  dynamic "ephemeral_storage" {
+    for_each = local.ephemeral_storage_gib == null ? [] : [local.ephemeral_storage_gib]
+    content {
+      size_in_gib = ephemeral_storage.value
+    }
+  }
 
   runtime_platform {
     operating_system_family = "LINUX"
@@ -18,31 +25,28 @@ resource "aws_ecs_task_definition" "server" {
 
   container_definitions = jsonencode(concat([{
     name      = "server"
-    image     = "${var.image}:${var.image_version}"
+    image     = "${local.image}:${var.image_version}"
     essential = true
     portMappings = [
       { containerPort = local.main_port, protocol = "tcp" },
       { containerPort = local.ingest_port, protocol = "tcp" },
     ]
-    environment = [
+    environment = concat([
       { name = "FLOWRENSIC_ADDR", value = ":${local.main_port}" },
       { name = "FLOWRENSIC_INGEST_ADDR", value = ":${local.ingest_port}" },
       { name = "FLOWRENSIC_UI_BASE_URL", value = "https://${var.ui_name}" },
-      { name = "FLOWRENSIC_DATABASE_URL", value = "postgres://${aws_db_instance.this.username}@${aws_db_instance.this.address}:${aws_db_instance.this.port}/${aws_db_instance.this.db_name}?sslmode=require" },
+      ], [for db in aws_db_instance.this : { name = "FLOWRENSIC_DATABASE_URL", value = "postgres://${db.username}@${db.address}:${db.port}/${db.db_name}?sslmode=require" }], [
       { name = "FLOWRENSIC_BLOB_BACKEND", value = "s3" },
-      { name = "FLOWRENSIC_BLOB_S3_BUCKET", value = aws_s3_bucket.histories.id },
+      { name = "FLOWRENSIC_BLOB_S3_BUCKET", value = aws_s3_bucket.histories.bucket },
       { name = "FLOWRENSIC_BLOB_S3_REGION", value = var.region },
       { name = "FLOWRENSIC_BLOB_S3_ENDPOINT", value = "s3.${var.region}.amazonaws.com" },
       { name = "FLOWRENSIC_REQUIRED_ENVS", value = join(",", var.required_envs) },
-      { name = "FLOWRENSIC_RESET_DATABASE_ON_DEPLOY", value = tostring(var.reset_database_on_deploy) },
       { name = "FLOWRENSIC_DATABASE_POOL_SIZE", value = tostring(var.database_pool_size) },
       { name = "FLOWRENSIC_DATABASE_CALL_POOL_SIZE", value = tostring(var.database_call_pool_size) },
-    ]
+    ])
     secrets = concat(
-      [
-        { name = "FLOWRENSIC_ENVS", valueFrom = local.envs_parameter_arn },
-        { name = "PGPASSWORD", valueFrom = "${aws_db_instance.this.master_user_secret[0].secret_arn}:password::" },
-      ],
+      [{ name = "FLOWRENSIC_ENVS", valueFrom = local.envs_parameter_arn }],
+      [for db in aws_db_instance.this : { name = "PGPASSWORD", valueFrom = "${db.master_user_secret[0].secret_arn}:password::" }],
       [for variable, arn in local.secret_parameter_arns : { name = variable, valueFrom = arn }],
     )
     logConfiguration = {
@@ -56,7 +60,8 @@ resource "aws_ecs_task_definition" "server" {
   }], slice([local.agent_container], 0, local.monitoring_cloud)))
 }
 
-# One server at a time: an update stops the old task before it starts the new one.
+# One server at a time, in both modes: an update stops the old task before it
+# starts the new one, and nothing changes the count.
 resource "aws_ecs_service" "server" {
   name                               = var.name
   cluster                            = aws_ecs_cluster.this.id

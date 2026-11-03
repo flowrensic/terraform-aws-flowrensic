@@ -29,13 +29,13 @@ output "service" {
 }
 
 output "database" {
-  description = "The identifier of the RDS instance."
-  value       = aws_db_instance.this.identifier
+  description = "With mode full, the identifier of the RDS instance. Empty in standalone mode."
+  value       = one(aws_db_instance.this[*].identifier) == null ? "" : one(aws_db_instance.this[*].identifier)
 }
 
 output "database_address" {
-  description = "The host name of the RDS instance, reached from the server only."
-  value       = aws_db_instance.this.address
+  description = "With mode full, the host name of the RDS instance, reached from the server only. Empty in standalone mode."
+  value       = one(aws_db_instance.this[*].address) == null ? "" : one(aws_db_instance.this[*].address)
 }
 
 output "grafana_url" {

@@ -23,6 +23,14 @@ locals {
   own_internal   = local.reuse_internal == 0 && length(var.allowed_security_group_ids) > 0 ? 1 : 0
   internal       = max(local.own_internal, local.reuse_internal)
 
+  # What the mode makes: RDS and its settings in full mode only.
+  full                  = var.mode == "full" ? 1 : 0
+  image                 = coalesce(var.image, var.mode == "full" ? "flowrensic/flowrensic" : "flowrensic/flowrensic-standalone")
+  server_cpu            = coalesce(var.server_cpu, var.mode == "full" ? 512 : 1024)
+  server_memory         = coalesce(var.server_memory, var.mode == "full" ? 1024 : 4096)
+  ephemeral_storage_gib = var.ephemeral_storage_gib != null ? var.ephemeral_storage_gib : (var.mode == "full" ? null : 50)
+  database_class        = coalesce(var.database_instance_class, "db.t4g.small")
+
   # Where the server and the monitoring task run, and whether they get a public IP.
   task_subnet_ids  = length(var.server_subnet_ids) > 0 ? var.server_subnet_ids : var.public_subnet_ids
   assign_public_ip = length(var.server_subnet_ids) == 0
