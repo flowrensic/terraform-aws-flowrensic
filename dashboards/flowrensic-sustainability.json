@@ -1127,7 +1127,7 @@
         "spec": {
           "id": 35,
           "title": "Why $job is slowed by instance",
-          "description": "Why this job is slowed on each server, one line for each busy signal: cpu, the CPU used over the last minute above its limit; pool_wait, the time waited for a database connection above its limit; and active_queries, lock_waiting and slow_queries, the active queries, the queries waiting on locks and the slow queries of the database above the CPU limit share of its cores. A line is 1 while that signal slows the job, and 0 otherwise. A slowed job runs one pass in 4 and lets the others go, so the server and the database stay healthy. Normal: 0, or 1 for a short while. Bad: 1 for a long time, the server or the database is too small for the work. This reason slows only the puller, findings and retention jobs, so the other jobs have no line here; the stored rules and replay rules jobs are slowed only while another job is behind, which this panel does not show.",
+          "description": "Why this job is slowed on each server, one line for each busy signal: cpu, the CPU used over the last minute above its limit; pool_wait, the time waited for a database connection above its limit; connections_refused, the connections Postgres refused to a pool, a minute, above their limit; connections, the connections of all servers against max_connections above their limit; and active_queries, lock_waiting and slow_queries, the active queries, the queries waiting on locks and the slow queries of the database above the CPU limit share of its cores. A line is 1 while that signal slows the job, and 0 otherwise. A slowed job runs one pass in 4 and lets the others go, so the server and the database stay healthy. Normal: 0, or 1 for a short while. Bad: 1 for a long time, the server or the database is too small for the work. This reason slows only the puller, findings and retention jobs, so the other jobs have no line here; the stored rules and replay rules jobs are slowed only while another job is behind, which this panel does not show.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1967,6 +1967,70 @@
             }
           }
         }
+      },
+      "panel-38": {
+        "kind": "Panel",
+        "spec": {
+          "id": 38,
+          "title": "Refused connections a minute by pool by instance",
+          "description": "Connections that Postgres refused to each pool of each server in the last minute, a count, for example with too many clients. The flat line is the limit of the refused connections, 1 a minute by default, the same for every pool. Normal: 0. Bad: a pool above the line for 5 minutes, Postgres has no room for the connections Flowrensic needs, its work fails and Flowrensic raises a finding about itself. No limit line while the limit is off.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance, pool) (increase(flowrensic_db_pool_refused_total[1m]))",
+                        "legendFormat": "{{instance}} {{pool}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (flowrensic_db_pool_refused_threshold)",
+                        "legendFormat": "{{instance}} threshold"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
       }
     },
     "layout": {
@@ -2229,6 +2293,19 @@
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-16"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 10,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-38"
                         }
                       }
                     }

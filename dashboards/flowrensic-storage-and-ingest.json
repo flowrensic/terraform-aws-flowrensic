@@ -4271,6 +4271,150 @@
             }
           }
         }
+      },
+      "panel-87": {
+        "kind": "Panel",
+        "spec": {
+          "id": 87,
+          "title": "Temporal rate limit answers per second by namespace",
+          "description": "Answers per second in which Temporal said Flowrensic was over its rate limit, resource exhausted, each try of a call once, by namespace. Normal: 0. Bad: above 0, Temporal holds Flowrensic back and the call is asked again with a growing pause. No data before the first such answer.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (namespace) (rate(flowrensic_temporal_rate_limited_total[$__rate_interval]))",
+                        "legendFormat": "{{namespace}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-88": {
+        "kind": "Panel",
+        "spec": {
+          "id": 88,
+          "title": "Calls given up over the rate limit per second by namespace",
+          "description": "Calls to Temporal per second that were still answered over the rate limit after their last try, by namespace. Normal: 0. Bad: above 0, a poll or a remediation stopped; lower FLOWRENSIC_TEMPORAL_RPS_SHARE or ask for a higher limit of the namespace. No data before the first give up.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (namespace) (rate(flowrensic_temporal_rate_limit_gave_up_total[$__rate_interval]))",
+                        "legendFormat": "{{namespace}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-89": {
+        "kind": "Panel",
+        "spec": {
+          "id": 89,
+          "title": "Limit of calls a second by namespace",
+          "description": "The most calls a second the server sends to a namespace, and where the limit comes from: cloud when Temporal Cloud told the namespace limit, setting for FLOWRENSIC_TEMPORAL_NAMESPACE_RPS, fixed for FLOWRENSIC_TEMPORAL_RPS. Normal: a share of the namespace limit, 10 percent by default. Bad: from setting on a Cloud namespace whose metrics are read, the Cloud limit is not known. No data before the first call to Temporal.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (namespace, from) (flowrensic_temporal_calls_limit)",
+                        "legendFormat": "{{namespace}} {{from}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "reqps"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
       }
     },
     "layout": {
@@ -5387,6 +5531,45 @@
             "spec": {
               "x": 0,
               "y": 234,
+              "width": 8,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-87"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 234,
+              "width": 8,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-88"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 16,
+              "y": 234,
+              "width": 8,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-89"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 240,
               "width": 24,
               "height": 3,
               "element": {
@@ -5399,7 +5582,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 237,
+              "y": 243,
               "width": 8,
               "height": 6,
               "element": {
@@ -5412,7 +5595,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 237,
+              "y": 243,
               "width": 8,
               "height": 6,
               "element": {
@@ -5425,7 +5608,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 237,
+              "y": 243,
               "width": 8,
               "height": 6,
               "element": {
@@ -5438,7 +5621,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 243,
+              "y": 249,
               "width": 8,
               "height": 6,
               "element": {
@@ -5451,7 +5634,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 243,
+              "y": 249,
               "width": 8,
               "height": 6,
               "element": {
@@ -5464,7 +5647,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 249,
+              "y": 255,
               "width": 24,
               "height": 3,
               "element": {
@@ -5477,7 +5660,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 252,
+              "y": 258,
               "width": 8,
               "height": 6,
               "element": {
@@ -5490,7 +5673,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 252,
+              "y": 258,
               "width": 8,
               "height": 6,
               "element": {
@@ -5503,7 +5686,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 252,
+              "y": 258,
               "width": 8,
               "height": 6,
               "element": {
