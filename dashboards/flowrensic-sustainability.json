@@ -1079,7 +1079,7 @@
         "spec": {
           "id": 20,
           "title": "State of $job by instance",
-          "description": "The state of this job on each server, one line for each of behind, late, paused and slowed. Behind and late count how many namespaces of the job are behind or late. Paused is 1 while shedding pauses the job, slowed is 1 while the job runs only one pass in a number of passes because another job is behind, which happens only to the stored rules and replay rules jobs. Normal: every line at 0. Bad: behind or late above 0, the job does not keep up, and the Findings row shows it. Behind and late show above 0 only on the server that runs the findings job, since that job judges every server; on the other servers they stay at 0.",
+          "description": "The state of this job on each server, one line for each of behind, late, paused and slowed. Behind and late count how many namespaces of the job are behind or late. Paused is 1 while shedding pauses the job, slowed is 1 while the job runs only one pass in a number of passes: for the stored rules and replay rules jobs because another job is behind, for the puller, findings and retention jobs because CPU or the database is busy, as the panel beside it shows. Normal: every line at 0. Bad: behind or late above 0, the job does not keep up, and the Findings row shows it. Behind and late show above 0 only on the server that runs the findings job, since that job judges every server; on the other servers they stay at 0.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1095,6 +1095,54 @@
                       "spec": {
                         "expr": "sum by (instance, state) (flowrensic_job_state{task=\"$job\"})",
                         "legendFormat": "{{instance}} {{state}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-35": {
+        "kind": "Panel",
+        "spec": {
+          "id": 35,
+          "title": "Why $job is slowed by instance",
+          "description": "Why this job is slowed on each server, one line for each busy signal: cpu, the CPU used over the last minute above its limit; pool_wait, the time waited for a database connection above its limit; and active_queries, lock_waiting and slow_queries, the active queries, the queries waiting on locks and the slow queries of the database above the CPU limit share of its cores. A line is 1 while that signal slows the job, and 0 otherwise. A slowed job runs one pass in 4 and lets the others go, so the server and the database stay healthy. Normal: 0, or 1 for a short while. Bad: 1 for a long time, the server or the database is too small for the work. This reason slows only the puller, findings and retention jobs, so the other jobs have no line here; the stored rules and replay rules jobs are slowed only while another job is behind, which this panel does not show.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance, signal) (flowrensic_job_slowed_by{task=\"$job\"})",
+                        "legendFormat": "{{instance}} {{signal}}"
                       }
                     },
                     "refId": "A",
@@ -1340,6 +1388,580 @@
                 "defaults": {
                   "unit": "short"
                 },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-26": {
+        "kind": "Panel",
+        "spec": {
+          "id": 26,
+          "title": "",
+          "description": "Whether Flowrensic is catching up: pulling old runs from Temporal after it fell behind, as after a deploy that empties the database, or after new runs closed faster than it pulls them. Each namespace is reported by the server that pulls it. The Dashboard screen of the Flowrensic UI shows the same.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "text",
+            "version": "",
+            "spec": {
+              "options": {
+                "mode": "markdown",
+                "content": "The catch-up of each namespace after the puller fell behind: the runs still to pull, the percent done and the time left."
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-27": {
+        "kind": "Panel",
+        "spec": {
+          "id": 27,
+          "title": "Runs left to pull by namespace",
+          "description": "An estimate of the runs of each namespace that Temporal holds and Flowrensic has not pulled yet, in runs. It is counted only while the namespace catches up, and is 0 once it caught up. Normal: 0, or a line that goes down to 0. Bad: a line that stays up or grows, the puller does not keep up. No data while pulling is off, and for a namespace that never fell behind.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (namespace) (flowrensic_catchup_runs_left)",
+                        "legendFormat": "{{namespace}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-28": {
+        "kind": "Panel",
+        "spec": {
+          "id": 28,
+          "title": "Catch-up done in percent by namespace",
+          "description": "How much of the catch-up of each namespace is done, in percent: the runs pulled since it started against those runs plus the runs left. 100 once it caught up. Normal: 100, or a line that climbs to 100. Bad: a line that stays flat under 100. No data while pulling is off, and for a namespace that never fell behind.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (namespace) (flowrensic_catchup_done_percent)",
+                        "legendFormat": "{{namespace}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-29": {
+        "kind": "Panel",
+        "spec": {
+          "id": 29,
+          "title": "Time left of the catch-up by namespace",
+          "description": "An estimate of the time the catch-up of each namespace still takes, in seconds: the runs left at the speed of its last polls. 0 once it caught up. Normal: 0, or a line that goes down. Bad: a line that grows, the puller gets slower or the runs grow faster. No data while pulling is off, for a namespace that never fell behind, and while the end is not known yet, in the first poll or when nothing was pulled.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (namespace) (flowrensic_catchup_seconds_left)",
+                        "legendFormat": "{{namespace}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "s"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-30": {
+        "kind": "Panel",
+        "spec": {
+          "id": 30,
+          "title": "",
+          "description": "How much of its capacity Flowrensic uses, as one load number for all its work. A job uses all its capacity when its pass takes its whole interval, or when the puller finds as many runs as its fetch budget. The CPU of a server uses all of it at its CPU limit. The parts work side by side, so the load number is the highest of them. The Dashboard screen of the Flowrensic UI shows the same.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "text",
+            "version": "",
+            "spec": {
+              "options": {
+                "mode": "markdown",
+                "content": "The share of its capacity Flowrensic uses: its own jobs added, each job, the requests sent to it, and the database. All work is the three added. Under 100% it keeps up, over 100% it falls behind. The CPU of each server is beside it, not part of it."
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-31": {
+        "kind": "Panel",
+        "spec": {
+          "id": 31,
+          "title": "Capacity used by all work",
+          "description": "The load number: the share of capacity of its own jobs, of the requests sent to it and of the database, added, in percent, the same as the Dashboard screen. The load of each instance is its own jobs, its requests and the database as it read it. 30 means Flowrensic can take about 3 times more work. Normal: under 100. Bad: over 100, Flowrensic falls behind and its backlog grows. No data before the first pass of a job ended.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum(max by (task) (flowrensic_job_load_percent)) + (max(flowrensic_requests_load_percent) or vector(0)) + (max(flowrensic_db_load_percent) or vector(0))",
+                        "legendFormat": "all work"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (flowrensic_load_percent)",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-32": {
+        "kind": "Panel",
+        "spec": {
+          "id": 32,
+          "title": "Capacity used by own jobs",
+          "description": "The share of capacity of its own jobs, every job added, and of each job, in percent. For the puller, the runs that came in for a poll against its fetch budget, never the runs left. For any other job, its last pass against its interval, the scopes a server runs added up. Normal: under 100. Bad: over 100, the job does not keep up and its work waits. No data before the first pass of a job ended.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum(max by (task) (flowrensic_job_load_percent))",
+                        "legendFormat": "own jobs"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (task) (flowrensic_job_load_percent)",
+                        "legendFormat": "{{task}}"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-33": {
+        "kind": "Panel",
+        "spec": {
+          "id": 33,
+          "title": "CPU share by instance",
+          "description": "The CPU each server used in the last minute against its CPU limit, in percent. Normal: under 100. Bad: near 100, the server runs short of CPU and its work slows down. No data on a server with no CPU limit, as outside a container.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (flowrensic_cpu_load_percent)",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-34": {
+        "kind": "Panel",
+        "spec": {
+          "id": 34,
+          "title": "Capacity used by requests by instance",
+          "description": "The time the requests sent to each server ran in the last 5 seconds, Connect RPC calls, updates from the interceptor, OTLP pushes and remote writes, against the cores of the server, in percent. Normal: under 100. Bad: over 100, requests wait for each other. No data in the first second after a server starts.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (flowrensic_requests_load_percent)",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-36": {
+        "kind": "Panel",
+        "spec": {
+          "id": 36,
+          "title": "Capacity used by the database",
+          "description": "The share of the database, the highest of the servers, in percent: the higher of its active queries against FLOWRENSIC_DB_CORES and its disk reads a second against FLOWRENSIC_DB_DISK_READS. Every client of the database counts, not only Flowrensic. Normal: under 100. Bad: over 100, queries wait for a core or for the disk. No data while no server could read the database.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max(flowrensic_db_load_percent)",
+                        "legendFormat": "database"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "percent"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-37": {
+        "kind": "Panel",
+        "spec": {
+          "id": 37,
+          "title": "Database activity",
+          "description": "The queries running on the database now, of every client, those of them that wait for a lock, those that started more than a second ago, and the blocks it reads from outside its shared buffers a second. Normal: few active queries and none waiting. Bad: queries that wait on locks or stay slow, or disk reads that keep rising. No data while no server could read the database.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max(flowrensic_db_active_queries)",
+                        "legendFormat": "active"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max(flowrensic_db_lock_waiting_queries)",
+                        "legendFormat": "waiting on locks"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max(flowrensic_db_slow_queries)",
+                        "legendFormat": "slow"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max(rate(flowrensic_db_blocks_read_total[$__rate_interval]))",
+                        "legendFormat": "disk reads a second"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
                 "overrides": []
               }
             }
@@ -1675,6 +2297,19 @@
                           "name": "panel-20"
                         }
                       }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 10,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-35"
+                        }
+                      }
                     }
                   ]
                 }
@@ -1682,6 +2317,177 @@
               "repeat": {
                 "mode": "variable",
                 "value": "job"
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "Catch-up",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 2,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-26"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 2,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-27"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 2,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-28"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 10,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-29"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "Capacity used",
+              "collapse": false,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 24,
+                        "height": 2,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-30"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 2,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-31"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 2,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-32"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 10,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-34"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 10,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-33"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 18,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-36"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 18,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-37"
+                        }
+                      }
+                    }
+                  ]
+                }
               }
             }
           },
