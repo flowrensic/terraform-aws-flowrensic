@@ -1283,7 +1283,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "sum(increase(flowrensic_findings_detected_total{class=~\"overlap_too_long|declared_not_done|old_version_during_rollout|stopped_after_deploy|deployed_without_replay|deploy_replay_failed\"}[$__range]))",
+                        "expr": "sum(increase(flowrensic_findings_detected_total{class=~\"overlap_too_long|declared_not_done|old_version_during_rollout|stopped_after_deploy\"}[$__range]))",
                         "legendFormat": "findings"
                       }
                     },
@@ -1477,7 +1477,7 @@
         "spec": {
           "id": 34,
           "title": "",
-          "description": "Judged from the metrics the Temporal server exports: task queues, rate limits, its database, workflow tasks, activity timeouts, history size and the history service. The panel counts the findings of this kind. It shows 0 when no engine metrics reach Flowrensic, and has no data only when Prometheus gets no metrics from the server.",
+          "description": "Judged from the metrics the Temporal Engine exports: task queues, rate limits, its database, workflow tasks, activity timeouts, history size and the history service. The panel counts the findings of this kind. It shows 0 when no engine metrics reach Flowrensic, and has no data only when Prometheus gets no metrics from the server.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1494,7 +1494,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Engine health\nJudged from the metrics the Temporal server exports: task queues, rate limits, its database, workflow tasks, activity timeouts, history size and the history service."
+                "content": "## Engine health\nJudged from the metrics the Temporal Engine exports: task queues, rate limits, its database, workflow tasks, activity timeouts, history size and the history service."
               },
               "fieldConfig": {
                 "defaults": {},

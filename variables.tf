@@ -58,18 +58,8 @@ variable "dns_zone" {
 }
 
 variable "envs_parameter" {
-  description = "The name of the SSM SecureString parameter that holds FLOWRENSIC_ENVS."
+  description = "The name of the SSM SecureString parameter that holds FLOWRENSIC_KNOWN_ENVS."
   type        = string
-}
-
-variable "required_envs" {
-  description = "The envs required to publish history, FLOWRENSIC_REQUIRED_ENVS. Each must be an env of FLOWRENSIC_ENVS."
-  type        = list(string)
-
-  validation {
-    condition     = length(var.required_envs) > 0
-    error_message = "required_envs needs at least one env."
-  }
 }
 
 variable "name" {

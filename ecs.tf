@@ -40,12 +40,11 @@ resource "aws_ecs_task_definition" "server" {
       { name = "FLOWRENSIC_BLOB_S3_BUCKET", value = aws_s3_bucket.histories.bucket },
       { name = "FLOWRENSIC_BLOB_S3_REGION", value = var.region },
       { name = "FLOWRENSIC_BLOB_S3_ENDPOINT", value = "s3.${var.region}.amazonaws.com" },
-      { name = "FLOWRENSIC_REQUIRED_ENVS", value = join(",", var.required_envs) },
       { name = "FLOWRENSIC_DATABASE_POOL_SIZE", value = tostring(var.database_pool_size) },
       { name = "FLOWRENSIC_DATABASE_CALL_POOL_SIZE", value = tostring(var.database_call_pool_size) },
     ])
     secrets = concat(
-      [{ name = "FLOWRENSIC_ENVS", valueFrom = local.envs_parameter_arn }],
+      [{ name = "FLOWRENSIC_KNOWN_ENVS", valueFrom = local.envs_parameter_arn }],
       [for db in aws_db_instance.this : { name = "PGPASSWORD", valueFrom = "${db.master_user_secret[0].secret_arn}:password::" }],
       [for variable, arn in local.secret_parameter_arns : { name = variable, valueFrom = arn }],
     )

@@ -85,9 +85,7 @@ Needed:
 - ui_name: the name of the UI and API, such as flowrensic.internal.example.com.
 - ingest_name: the public name CI jobs send to, such as flowrensic-ingest.example.com.
 - dns_zone: the public Route 53 zone both names are in.
-- envs_parameter: the SSM parameter that holds FLOWRENSIC_ENVS, the env list with its keys.
-- required_envs: the envs required to publish history, such as ["prod"]. Each must be an env
-  of the env list. The server does not start without it.
+- envs_parameter: the SSM parameter that holds FLOWRENSIC_KNOWN_ENVS, the env list with its keys.
 
 With a default:
 

@@ -37,7 +37,7 @@
         "spec": {
           "id": 1,
           "title": "",
-          "description": "The metrics of the Temporal server, the engine, that Flowrensic reads from the metrics endpoint of the engine or that a worker forwards. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no env has an engine metrics address and no worker forwards engine metrics.",
+          "description": "The metrics of the Temporal Engine, the engine, that Flowrensic reads from the metrics endpoint of the engine or that a worker forwards. The section shows how fast this data comes in, as items and as bytes per second, and how much of it is stored. The whole section has no data or stays at 0 when no env has an engine metrics address and no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1589,7 +1589,7 @@
         "spec": {
           "id": 36,
           "title": "",
-          "description": "The endpoint IngestEnvInstanceMetrics takes in engine metrics a worker read and forwards. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no worker forwards engine metrics.",
+          "description": "The endpoint IngestEphemeralRunMetrics takes in engine metrics a worker read and forwards. The four panels show how many requests reach it, how fast they are answered, and how many were answered with ok or not. The whole section has no data when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1606,7 +1606,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## IngestEnvInstanceMetrics\nEngine metrics a worker scraped and forwards."
+                "content": "## IngestEphemeralRunMetrics\nEngine metrics a worker scraped and forwards."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -1620,8 +1620,8 @@
         "kind": "Panel",
         "spec": {
           "id": 37,
-          "title": "IngestEnvInstanceMetrics requests per second",
-          "description": "Requests to IngestEnvInstanceMetrics per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no worker forwards engine metrics.",
+          "title": "IngestEphemeralRunMetrics requests per second",
+          "description": "Requests to IngestEphemeralRunMetrics per second, summed over all servers, whatever the answer. There is no good or bad value of its own: it follows how much the senders send. A drop to 0 while they run means they stopped sending. No data until the first request, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1635,7 +1635,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "sum(rate(flowrensic_rpc_requests_total{procedure=\"/flowrensic.v1.IngestService/IngestEnvInstanceMetrics\"}[$__rate_interval]))",
+                        "expr": "sum(rate(flowrensic_rpc_requests_total{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\"}[$__rate_interval]))",
                         "legendFormat": "requests"
                       }
                     },
@@ -1668,8 +1668,8 @@
         "kind": "Panel",
         "spec": {
           "id": 38,
-          "title": "IngestEnvInstanceMetrics response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestEnvInstanceMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards engine metrics.",
+          "title": "IngestEphemeralRunMetrics response latency p95 second",
+          "description": "The time in seconds in which 95% of the requests to IngestEphemeralRunMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1683,7 +1683,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEnvInstanceMetrics\"}[$__rate_interval])))",
+                        "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
@@ -1716,8 +1716,8 @@
         "kind": "Panel",
         "spec": {
           "id": 39,
-          "title": "IngestEnvInstanceMetrics responses ok per second",
-          "description": "Requests to IngestEnvInstanceMetrics answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no worker forwards engine metrics.",
+          "title": "IngestEphemeralRunMetrics responses ok per second",
+          "description": "Requests to IngestEphemeralRunMetrics answered with ok per second, summed over all servers. Normal: the same as all the requests. Bad: lower than all the requests; the panel on the right shows the others. No data until the first ok answer, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1731,7 +1731,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "sum(rate(flowrensic_rpc_requests_total{procedure=\"/flowrensic.v1.IngestService/IngestEnvInstanceMetrics\",code=\"ok\"}[$__rate_interval]))",
+                        "expr": "sum(rate(flowrensic_rpc_requests_total{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\",code=\"ok\"}[$__rate_interval]))",
                         "legendFormat": "ok"
                       }
                     },
@@ -1764,8 +1764,8 @@
         "kind": "Panel",
         "spec": {
           "id": 40,
-          "title": "IngestEnvInstanceMetrics responses nok per second",
-          "description": "Requests to IngestEnvInstanceMetrics answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
+          "title": "IngestEphemeralRunMetrics responses nok per second",
+          "description": "Requests to IngestEphemeralRunMetrics answered with any code but ok per second, summed over all servers: refused as not valid, refused while the server sheds load, or failed. Normal: 0. Bad: above 0, the sender did not get its data in; the warn and error lines on the platform dashboard and the Shedding row of the sustainability dashboard say why. No data until the first answer that is not ok, so an empty panel is the normal case.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1779,7 +1779,7 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "sum(rate(flowrensic_rpc_requests_total{procedure=\"/flowrensic.v1.IngestService/IngestEnvInstanceMetrics\",code!=\"ok\"}[$__rate_interval]))",
+                        "expr": "sum(rate(flowrensic_rpc_requests_total{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\",code!=\"ok\"}[$__rate_interval]))",
                         "legendFormat": "nok"
                       }
                     },
@@ -2581,7 +2581,7 @@
         "spec": {
           "id": 58,
           "title": "",
-          "description": "The server reads the metrics endpoint of each engine it knows the address of, a Temporal server you run or Temporal Cloud. A scrape is one read of one endpoint. Each line is all engines and servers together. The whole section has no data when no env has an engine metrics address.",
+          "description": "The server reads the metrics endpoint of each engine it knows the address of, a Temporal Engine you run or Temporal Cloud. A scrape is one read of one endpoint. Each line is all engines and servers together. The whole section has no data when no env has an engine metrics address.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
