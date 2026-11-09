@@ -62,3 +62,18 @@ resource "aws_iam_role_policy" "task" {
   role   = aws_iam_role.task.id
   policy = data.aws_iam_policy_document.task.json
 }
+
+# ECS Exec opens its session through the SSM agent in the task.
+resource "aws_iam_role_policy" "execute_command" {
+  count = var.enable_execute_command ? 1 : 0
+  name  = "execute-command"
+  role  = aws_iam_role.task.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["ssmmessages:CreateControlChannel", "ssmmessages:CreateDataChannel", "ssmmessages:OpenControlChannel", "ssmmessages:OpenDataChannel"]
+      Resource = "*"
+    }]
+  })
+}

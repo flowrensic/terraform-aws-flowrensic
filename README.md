@@ -139,6 +139,9 @@ With a default:
 - internal_listener_rule_priority: the priority of the UI rule on
   internal_listener_arn, from 1 to 49999. With monitoring ecs the Grafana rule
   gets the next number. Null by default, the next free one.
+- enable_execute_command: allow ECS Exec into the server task, e.g.
+  `aws ecs execute-command --cluster NAME --task TASK --container server --interactive --command sh`.
+  False by default. Who may run it is decided by your IAM (ecs:ExecuteCommand).
 
 ## Networking
 

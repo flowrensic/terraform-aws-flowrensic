@@ -257,3 +257,9 @@ variable "internal_listener_rule_priority" {
     error_message = "internal_listener_rule_priority is a whole number from 1 to 49999, or null."
   }
 }
+
+variable "enable_execute_command" {
+  description = "Allow ECS Exec into the server task (aws ecs execute-command), for looking at the database and files inside it. Off by default."
+  type        = bool
+  default     = false
+}

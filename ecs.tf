@@ -71,6 +71,7 @@ resource "aws_ecs_service" "server" {
   deployment_maximum_percent         = 100
   health_check_grace_period_seconds  = 60
   wait_for_steady_state              = true
+  enable_execute_command             = var.enable_execute_command
 
   network_configuration {
     subnets          = local.task_subnet_ids
