@@ -1,5 +1,7 @@
 # Run Flowrensic on AWS with Terraform
 
+Flowrensic runs beside your durable workflow engine and finds problems in your workflows. This is the AWS Terraform module of Temporal Flowrensic, the edition for Temporal.
+
 This folder is a Terraform module. It runs Flowrensic in a VPC you already have:
 
 - one server on ECS Fargate
