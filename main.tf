@@ -25,7 +25,7 @@ locals {
 
   # What the mode makes: RDS and its settings in full mode only.
   full                  = var.mode == "full" ? 1 : 0
-  image                 = coalesce(var.image, var.mode == "full" ? "flowrensic/flowrensic" : "flowrensic/flowrensic-standalone")
+  image                 = coalesce(var.image, var.mode == "full" ? "flowrensic/temporal-flowrensic" : "flowrensic/temporal-flowrensic-standalone")
   server_cpu            = coalesce(var.server_cpu, var.mode == "full" ? 512 : 1024)
   server_memory         = coalesce(var.server_memory, var.mode == "full" ? 1024 : 4096)
   ephemeral_storage_gib = var.ephemeral_storage_gib != null ? var.ephemeral_storage_gib : (var.mode == "full" ? null : 50)

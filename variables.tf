@@ -69,7 +69,7 @@ variable "name" {
 }
 
 variable "image" {
-  description = "The Flowrensic image, without the tag. Null is flowrensic/flowrensic in full mode and flowrensic/flowrensic-standalone in standalone mode."
+  description = "The Flowrensic image, without the tag. Null is flowrensic/temporal-flowrensic in full mode and flowrensic/temporal-flowrensic-standalone in standalone mode."
   type        = string
   default     = null
 }

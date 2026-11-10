@@ -23,7 +23,7 @@ own repo. The folder example holds a root module that uses this one.
 The module is on the Terraform Registry. In your root module:
 
     module "flowrensic" {
-      source  = "flowrensic/flowrensic/aws"
+      source  = "flowrensic/temporal-flowrensic/aws"
       version = "0.6.4"
 
       image_version = "0.6.4"
@@ -37,9 +37,9 @@ number to version and image_version.
 
 The setting mode picks one of two:
 
-- full, the default. The server runs the image flowrensic/flowrensic and keeps its
+- full, the default. The server runs the image flowrensic/temporal-flowrensic and keeps its
   data in an RDS Postgres database. The data stays over restarts and updates.
-- standalone. The server runs the image flowrensic/flowrensic-standalone, which
+- standalone. The server runs the image flowrensic/temporal-flowrensic-standalone, which
   runs its own Postgres inside the task. There is no RDS and no volume, so the
   database is lost each time the task stops: on every update, restart or crash. A
   new task starts with an empty database and pulls again what Temporal still keeps.
@@ -78,7 +78,7 @@ Manager. Nobody types it, and it is not in the state either.
 Needed:
 
 - region: the AWS region, the same as your provider's.
-- image_version: the tag of flowrensic/flowrensic to run.
+- image_version: the tag of flowrensic/temporal-flowrensic to run.
 - vpc_id: the VPC to run in.
 - public_subnet_ids: public subnets in two zones. The public load balancers run
   there, and the server too unless you set server_subnet_ids.
@@ -93,7 +93,7 @@ With a default:
 - mode: full or standalone, full by default. See Modes above.
 - database_subnet_ids: in full mode, subnets in two zones for the database. Needed
   in full mode, and not allowed in standalone mode.
-- image: flowrensic/flowrensic in full mode and flowrensic/flowrensic-standalone in
+- image: flowrensic/temporal-flowrensic in full mode and flowrensic/temporal-flowrensic-standalone in
   standalone mode.
 - server_subnet_ids: private subnets for the server, empty by default. See
   Networking below.
