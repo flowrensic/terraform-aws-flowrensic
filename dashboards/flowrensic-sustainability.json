@@ -1831,7 +1831,7 @@
         "spec": {
           "id": 36,
           "title": "Capacity used by the database",
-          "description": "The share of the database, the highest of the servers, in percent: the higher of its active queries against FLOWRENSIC_DB_CORES and its disk reads a second against FLOWRENSIC_DB_DISK_READS. Every client of the database counts, not only Flowrensic. Normal: under 100. Bad: over 100, queries wait for a core or for the disk. No data while no server could read the database.",
+          "description": "The share of the database, the highest of the servers, in percent: its active queries against FLOWRENSIC_DB_CORES. Every client of the database counts, not only Flowrensic. Disk reads are on the panel Database activity and are not part of the share. Normal: under 100. Bad: over 100, queries wait for a core, a lock or the disk. No data while no server could read the database.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
