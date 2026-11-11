@@ -1527,7 +1527,7 @@
         "spec": {
           "id": 29,
           "title": "Time left of the catch-up by namespace",
-          "description": "An estimate of the time the catch-up of each namespace still takes, in seconds: the runs left at the speed of its last polls. 0 once it caught up. Normal: 0, or a line that goes down. Bad: a line that grows, the puller gets slower or the runs grow faster. No data while pulling is off, for a namespace that never fell behind, and while the end is not known yet, in the first poll or when nothing was pulled.",
+          "description": "An estimate of the time the catch-up of each namespace still takes, in seconds: the runs left at the speed of the past runs it pulled in the last 20 minutes. 0 once it caught up. Normal: 0, or a line that goes down. Bad: a line that grows, the puller gets slower or the runs grow faster. No data while pulling is off, for a namespace that never fell behind, and while the end is not known yet, in the first poll or when nothing was pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2031,6 +2031,54 @@
             }
           }
         }
+      },
+      "panel-39": {
+        "kind": "Panel",
+        "spec": {
+          "id": 39,
+          "title": "Why the catch-up is held by instance",
+          "description": "Why the catch-up of past runs is held on each server, one line for each signal: cpu, pool_wait, connections_refused, connections, active_queries, lock_waiting and slow_queries, the busy signals that slow the own jobs, and memory, cpu, pool_wait, connections_refused, connections and calls_running, a value that would start shedding and stayed over its limit for a while. A line is 1 while that signal holds the catch-up, and 0 otherwise. While held, the puller takes no past run, and live runs keep their pace. Normal: 0, or 1 for a short while. Bad: 1 for a long time, the catch-up does not move. No data while pulling is off.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance, signal) (flowrensic_job_slowed_by{task=\"catch_up\"})",
+                        "legendFormat": "{{instance}} {{signal}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "short"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
       }
     },
     "layout": {
@@ -2455,6 +2503,19 @@
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-29"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 10,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-39"
                         }
                       }
                     }

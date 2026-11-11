@@ -24,7 +24,7 @@ provider "grafana" {
 
 module "flowrensic" {
   source  = "flowrensic/temporal-flowrensic/aws"
-  version = "0.6.64"
+  version = "0.6.65"
 
   region            = "eu-west-1"
   image_version     = "0.6.4"
