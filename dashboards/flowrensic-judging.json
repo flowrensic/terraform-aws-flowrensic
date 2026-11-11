@@ -116,8 +116,8 @@
         "kind": "Panel",
         "spec": {
           "id": 3,
-          "title": "history_growth analysis runs duration p95",
-          "description": "The time in seconds in which 95% of the runs of the analyzer history_growth ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
+          "title": "history_growth analysis runs duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the runs of the analyzer history_growth ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -131,11 +131,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"history_growth\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"history_growth\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"history_growth\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -340,8 +372,8 @@
         "kind": "Panel",
         "spec": {
           "id": 8,
-          "title": "failing_runs analysis runs duration p95",
-          "description": "The time in seconds in which 95% of the runs of the analyzer failing_runs ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
+          "title": "failing_runs analysis runs duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the runs of the analyzer failing_runs ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -355,11 +387,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"failing_runs\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"failing_runs\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"failing_runs\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -564,8 +628,8 @@
         "kind": "Panel",
         "spec": {
           "id": 13,
-          "title": "wedged_runs analysis runs duration p95",
-          "description": "The time in seconds in which 95% of the runs of the analyzer wedged_runs ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
+          "title": "wedged_runs analysis runs duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the runs of the analyzer wedged_runs ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -579,11 +643,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"wedged_runs\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"wedged_runs\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"wedged_runs\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -788,8 +884,8 @@
         "kind": "Panel",
         "spec": {
           "id": 18,
-          "title": "refused_updates analysis runs duration p95",
-          "description": "The time in seconds in which 95% of the runs of the analyzer refused_updates ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
+          "title": "refused_updates analysis runs duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the runs of the analyzer refused_updates ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -803,11 +899,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"refused_updates\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"refused_updates\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"refused_updates\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -1012,8 +1140,8 @@
         "kind": "Panel",
         "spec": {
           "id": 23,
-          "title": "dangling_work analysis runs duration p95",
-          "description": "The time in seconds in which 95% of the runs of the analyzer dangling_work ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
+          "title": "dangling_work analysis runs duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the runs of the analyzer dangling_work ended, over the last few minutes. Normal: well under a second. Bad: a line that climbs; large histories take longer, and a slow analyzer slows the intake of runs. No data when the analyzer did not run in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1027,11 +1155,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"dangling_work\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"dangling_work\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_analyzer_run_duration_seconds_bucket{analyzer=\"dangling_work\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }

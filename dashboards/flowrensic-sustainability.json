@@ -582,8 +582,8 @@
         "kind": "Panel",
         "spec": {
           "id": 11,
-          "title": "Request time p95 by kind of request by instance",
-          "description": "The time in seconds in which 95% of the requests of each kind finished, over the last few minutes. The flat line is the request time limit, 1 second by default, checked for each kind on its own. Normal: well under the line. Bad: a kind that stays above the line for 5 minutes, then Flowrensic raises a finding about itself. This panel works the time out over a longer window than the check does, so a line near the limit is a hint and the finding is what counts. No limit line while the limit is off. No line for a kind with no requests.",
+          "title": "Request time p50, p95, p99 by kind of request by instance",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests of each kind finished, over the last few minutes. The flat line is the request time limit, 1 second by default, checked for each kind on its own. Normal: well under the line. Bad: a kind that stays above the line for 5 minutes, then Flowrensic raises a finding about itself. This panel works the time out over a longer window than the check does, so a line near the limit is a hint and the finding is what counts. No limit line while the limit is off. No line for a kind with no requests.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -597,11 +597,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "histogram_quantile(0.95, sum by (le, instance, procedure) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
-                        "legendFormat": "{{instance}} {{procedure}}"
+                        "expr": "histogram_quantile(0.5, sum by (le, instance, procedure) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50 {{instance}} {{procedure}}"
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.95, sum by (le, instance, procedure) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p95 {{instance}} {{procedure}}"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le, instance, procedure) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99 {{instance}} {{procedure}}"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 },
@@ -617,7 +649,7 @@
                         "legendFormat": "{{instance}} limit"
                       }
                     },
-                    "refId": "B",
+                    "refId": "D",
                     "hidden": false
                   }
                 }

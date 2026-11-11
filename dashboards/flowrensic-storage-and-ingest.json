@@ -996,8 +996,8 @@
         "kind": "Panel",
         "spec": {
           "id": 23,
-          "title": "IngestActivityEvents response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestActivityEvents were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker runs the Flowrensic interceptor.",
+          "title": "IngestActivityEvents response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestActivityEvents were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker runs the Flowrensic interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1011,11 +1011,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestActivityEvents\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestActivityEvents\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestActivityEvents\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -1220,8 +1252,8 @@
         "kind": "Panel",
         "spec": {
           "id": 28,
-          "title": "IngestHistory response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestHistory were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no client sends histories.",
+          "title": "IngestHistory response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestHistory were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no client sends histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1235,11 +1267,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestHistory\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestHistory\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestHistory\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -1444,8 +1508,8 @@
         "kind": "Panel",
         "spec": {
           "id": 33,
-          "title": "IngestEngineHistory response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestEngineHistory were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards histories.",
+          "title": "IngestEngineHistory response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestEngineHistory were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards histories.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1459,11 +1523,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEngineHistory\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEngineHistory\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEngineHistory\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -1668,8 +1764,8 @@
         "kind": "Panel",
         "spec": {
           "id": 38,
-          "title": "IngestEphemeralRunMetrics response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestEphemeralRunMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards engine metrics.",
+          "title": "IngestEphemeralRunMetrics response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestEphemeralRunMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards engine metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1683,11 +1779,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestEphemeralRunMetrics\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -1892,8 +2020,8 @@
         "kind": "Panel",
         "spec": {
           "id": 43,
-          "title": "IngestReplayResults response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestReplayResults were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no pipeline reports replay results.",
+          "title": "IngestReplayResults response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestReplayResults were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no pipeline reports replay results.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -1907,11 +2035,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestReplayResults\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestReplayResults\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestReplayResults\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -2116,8 +2276,8 @@
         "kind": "Panel",
         "spec": {
           "id": 48,
-          "title": "IngestDeployStage response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestDeployStage were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no pipeline reports its deploys.",
+          "title": "IngestDeployStage response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestDeployStage were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no pipeline reports its deploys.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2131,11 +2291,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestDeployStage\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestDeployStage\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestDeployStage\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -2340,8 +2532,8 @@
         "kind": "Panel",
         "spec": {
           "id": 53,
-          "title": "Poll duration p95",
-          "description": "The time in seconds in which 95% of the polls ended, over the last few minutes. Normal: well under the poll interval. Bad: close to the interval or above it; the puller falls behind, see its job section on the sustainability dashboard. No data when there was no poll in that time, so it stays empty when no namespace is set to be pulled.",
+          "title": "Poll duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the polls ended, over the last few minutes. Normal: well under the poll interval. Bad: close to the interval or above it; the puller falls behind, see its job section on the sustainability dashboard. No data when there was no poll in that time, so it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2355,11 +2547,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_pull_poll_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_pull_poll_duration_seconds_bucket[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_pull_poll_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -2484,8 +2708,8 @@
         "kind": "Panel",
         "spec": {
           "id": 56,
-          "title": "Fetch duration p95",
-          "description": "The time in seconds in which 95% of the fetches of a history ended, over the last few minutes. Normal: well under a second for most histories; large histories take longer. Bad: a line that climbs; the engine is slow or the histories are large. No data when there was no fetch in that time, so it stays empty when no namespace is set to be pulled.",
+          "title": "Fetch duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the fetches of a history ended, over the last few minutes. Normal: well under a second for most histories; large histories take longer. Bad: a line that climbs; the engine is slow or the histories are large. No data when there was no fetch in that time, so it stays empty when no namespace is set to be pulled.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2499,11 +2723,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_pull_fetch_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_pull_fetch_duration_seconds_bucket[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_pull_fetch_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -2660,8 +2916,8 @@
         "kind": "Panel",
         "spec": {
           "id": 60,
-          "title": "Scrape duration p95",
-          "description": "The time in seconds in which 95% of the scrapes ended, over the last few minutes. Normal: well under the scrape interval. Bad: close to the interval or above it; engine metrics come late. No data when there was no scrape in that time, so it stays empty when no env has an engine metrics address.",
+          "title": "Scrape duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the scrapes ended, over the last few minutes. Normal: well under the scrape interval. Bad: close to the interval or above it; engine metrics come late. No data when there was no scrape in that time, so it stays empty when no env has an engine metrics address.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -2675,11 +2931,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_scrape_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_scrape_duration_seconds_bucket[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_scrape_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -3012,8 +3300,8 @@
         "kind": "Panel",
         "spec": {
           "id": 38,
-          "title": "IngestWorkerMetrics response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestWorkerMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards its metrics.",
+          "title": "IngestWorkerMetrics response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestWorkerMetrics were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no worker forwards its metrics.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3027,11 +3315,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestWorkerMetrics\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestWorkerMetrics\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestWorkerMetrics\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -3236,8 +3556,8 @@
         "kind": "Panel",
         "spec": {
           "id": 64,
-          "title": "OTLP worker metrics push response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to OTLP worker metrics push were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no exporter pushes worker metrics to Flowrensic.",
+          "title": "OTLP worker metrics push response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to OTLP worker metrics push were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no exporter pushes worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3251,11 +3571,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/v1/metrics\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/v1/metrics\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/v1/metrics\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -3460,8 +3812,8 @@
         "kind": "Panel",
         "spec": {
           "id": 69,
-          "title": "Prometheus remote write response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to Prometheus remote write were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no Prometheus sends worker metrics to Flowrensic.",
+          "title": "Prometheus remote write response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to Prometheus remote write were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no Prometheus sends worker metrics to Flowrensic.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3475,11 +3827,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/api/v1/write\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/api/v1/write\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/api/v1/write\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -3684,8 +4068,8 @@
         "kind": "Panel",
         "spec": {
           "id": 74,
-          "title": "Worker scrape duration p95",
-          "description": "The time in seconds in which 95% of the scrapes of worker metrics ended, over the last few minutes. Normal: well under the scrape interval. Bad: close to the interval or above it. No data when FLOWRENSIC_WORKER_SCRAPE_TARGETS is not set, or when there was no scrape in that time.",
+          "title": "Worker scrape duration p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the scrapes of worker metrics ended, over the last few minutes. Normal: well under the scrape interval. Bad: close to the interval or above it. No data when FLOWRENSIC_WORKER_SCRAPE_TARGETS is not set, or when there was no scrape in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3699,11 +4083,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_worker_scrape_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_worker_scrape_duration_seconds_bucket[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_worker_scrape_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -3860,8 +4276,8 @@
         "kind": "Panel",
         "spec": {
           "id": 78,
-          "title": "IngestClientCalls response latency p95 second",
-          "description": "The time in seconds in which 95% of the requests to IngestClientCalls were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no client runs the Flowrensic client interceptor.",
+          "title": "IngestClientCalls response latency p50, p95, p99 seconds",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the requests to IngestClientCalls were answered, over the last few minutes, all servers together. Normal: well under 1 second, the request time limit by default, which the sustainability dashboard draws for each kind of request. Bad: a line that climbs or stays high; senders may time out and send again. No data when there was no request in that time, so it stays empty when no client runs the Flowrensic client interceptor.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -3875,11 +4291,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestClientCalls\"}[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
                         "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestClientCalls\"}[$__rate_interval])))",
                         "legendFormat": "p95"
                       }
                     },
-                    "refId": "A",
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_rpc_request_duration_seconds_bucket{procedure=\"/flowrensic.v1.IngestService/IngestClientCalls\"}[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -4005,7 +4453,7 @@
         "spec": {
           "id": 81,
           "title": "",
-          "description": "What the buffer of each worker lost and holds, one line for each env. A worker running the Flowrensic interceptor keeps what it has to send in a buffer and sends it to the server in batches. An env is one Temporal environment of the Flowrensic config. Each panel shows 0 for every env of the config from the start, and the whole section has no data when the config has no env.",
+          "description": "What the buffer of each worker lost and holds, one line for each env. A worker running the Flowrensic interceptor keeps what it has to send in a buffer and sends it to the server in batches. An env is one Temporal environment of the Flowrensic config. The last panel shows the time the code of the SDK takes on the workers. The other panels show 0 for every env of the config from the start, and the whole section has no data when the config has no env.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -4022,7 +4470,7 @@
             "spec": {
               "options": {
                 "mode": "markdown",
-                "content": "## Worker sends\nWhat the buffer of each worker lost and holds, by env: records it dropped, sends it gave up at their timeout, and records waiting to be sent."
+                "content": "## Worker sends\nWhat the buffer of each worker lost and holds, by env: records it dropped, sends it gave up at their timeout, records waiting to be sent, and the time the code of the SDK takes on the workers."
               },
               "fieldConfig": {
                 "defaults": {},
@@ -4409,6 +4857,230 @@
               "fieldConfig": {
                 "defaults": {
                   "unit": "reqps"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-90": {
+        "kind": "Panel",
+        "spec": {
+          "id": 90,
+          "title": "Events fetched per second",
+          "description": "History events the server fetched from Temporal per second, all namespaces together, a count. Normal: it follows the runs that close; compare it with History items per second. Bad: 0 for a long time while runs close, the pull is stuck. No data when no namespace is set to be pulled.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum(rate(flowrensic_pull_fetched_events_total[$__rate_interval]))",
+                        "legendFormat": "events"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-91": {
+        "kind": "Panel",
+        "spec": {
+          "id": 91,
+          "title": "Calls to Temporal that waited per second by namespace",
+          "description": "Calls to the Temporal API per second that waited for their turn under the limit of calls a second of their namespace. Normal: 0 or low. Bad: high for a long time, the server asks for more than the limit allows and the pull falls behind. No data until a call has waited; a namespace gets its line from its first call that waited.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (namespace) (rate(flowrensic_temporal_calls_waited_total[$__rate_interval]))",
+                        "legendFormat": "{{namespace}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-92": {
+        "kind": "Panel",
+        "spec": {
+          "id": 92,
+          "title": "Samples stored per second",
+          "description": "Engine metric samples the scrapes stored per second, all engines together, a count. Normal: steady while the engines run. Bad: 0 while the scrapes succeed, the engine sends no metrics. No data when no engine has a metrics endpoint set.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum(rate(flowrensic_scraped_samples_total[$__rate_interval]))",
+                        "legendFormat": "samples"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-93": {
+        "kind": "Panel",
+        "spec": {
+          "id": 93,
+          "title": "SDK time on the worker",
+          "description": "How long the code of the Flowrensic SDK takes on the workers of each env: the activity and workflow interceptors for each activity attempt and each query, and each send of a batch to the server, without the wait for the answer. Three lines per env, p50, p95 and p99, in seconds. This is what Flowrensic costs the workers. Normal: well under a millisecond for p50 and a few milliseconds for p99. Bad: a p99 that climbs to tens of milliseconds or more; the SDK takes time the activities and workflows need. No data until a worker of the env with the Flowrensic interceptor has sent its time, and for the time between two reports of an idle worker.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (env, le) (rate(flowrensic_worker_own_time_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "{{env}} p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.95, sum by (env, le) (rate(flowrensic_worker_own_time_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "{{env}} p95"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (env, le) (rate(flowrensic_worker_own_time_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "{{env}} p99"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "s"
                 },
                 "overrides": []
               }
@@ -5441,6 +6113,19 @@
               "x": 0,
               "y": 219,
               "width": 24,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-93"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 225,
+              "width": 24,
               "height": 3,
               "element": {
                 "kind": "ElementReference",
@@ -5452,7 +6137,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 222,
+              "y": 228,
               "width": 8,
               "height": 6,
               "element": {
@@ -5465,7 +6150,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 222,
+              "y": 228,
               "width": 8,
               "height": 6,
               "element": {
@@ -5478,7 +6163,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 222,
+              "y": 228,
               "width": 8,
               "height": 6,
               "element": {
@@ -5491,7 +6176,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 228,
+              "y": 234,
               "width": 8,
               "height": 6,
               "element": {
@@ -5504,7 +6189,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 228,
+              "y": 234,
               "width": 8,
               "height": 6,
               "element": {
@@ -5517,7 +6202,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 228,
+              "y": 234,
               "width": 8,
               "height": 6,
               "element": {
@@ -5530,7 +6215,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 234,
+              "y": 240,
               "width": 8,
               "height": 6,
               "element": {
@@ -5543,7 +6228,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 234,
+              "y": 240,
               "width": 8,
               "height": 6,
               "element": {
@@ -5556,7 +6241,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 234,
+              "y": 240,
               "width": 8,
               "height": 6,
               "element": {
@@ -5569,7 +6254,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 240,
+              "y": 252,
               "width": 24,
               "height": 3,
               "element": {
@@ -5582,7 +6267,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 243,
+              "y": 255,
               "width": 8,
               "height": 6,
               "element": {
@@ -5595,7 +6280,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 243,
+              "y": 255,
               "width": 8,
               "height": 6,
               "element": {
@@ -5608,7 +6293,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 243,
+              "y": 255,
               "width": 8,
               "height": 6,
               "element": {
@@ -5621,7 +6306,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 249,
+              "y": 261,
               "width": 8,
               "height": 6,
               "element": {
@@ -5634,7 +6319,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 249,
+              "y": 261,
               "width": 8,
               "height": 6,
               "element": {
@@ -5647,7 +6332,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 255,
+              "y": 267,
               "width": 24,
               "height": 3,
               "element": {
@@ -5660,7 +6345,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 258,
+              "y": 270,
               "width": 8,
               "height": 6,
               "element": {
@@ -5673,7 +6358,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 8,
-              "y": 258,
+              "y": 270,
               "width": 8,
               "height": 6,
               "element": {
@@ -5686,12 +6371,51 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 16,
-              "y": 258,
+              "y": 270,
               "width": 8,
               "height": 6,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-75"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 246,
+              "width": 8,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-90"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 8,
+              "y": 246,
+              "width": 8,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-91"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 16,
+              "y": 261,
+              "width": 8,
+              "height": 6,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-92"
               }
             }
           }

@@ -69,7 +69,7 @@
         "spec": {
           "id": 2,
           "title": "Running instances",
-          "description": "One row for each Flowrensic server that Prometheus scrapes: its address, its host name, up, the CPU cores it uses and its memory in bytes. Up comes from Prometheus: 1 when the server answered the last scrape, 0 when it did not. Normal: every server you run, with up 1. Bad: up 0, the server is down or cannot be reached; its host name stays for an hour. No data when Prometheus does not scrape the servers under the job name flowrensic, for example when the metrics are only pushed over OTLP.",
+          "description": "One row for each Flowrensic server that Prometheus scrapes: its address, its host name, up, the CPU cores it uses, its memory in bytes, Go processors, how many threads may run Go code at once, and GOGC, the garbage collection setting, 100 by default. Up comes from Prometheus: 1 when the server answered the last scrape, 0 when it did not. Normal: every server you run, with up 1. Bad: up 0, the server is down or cannot be reached; its host name stays for an hour. No data when Prometheus does not scrape the servers under the job name flowrensic, for example when the metrics are only pushed over OTLP.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -128,6 +128,42 @@
                     "refId": "C",
                     "hidden": false
                   }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (go_processor_limit{job=\"flowrensic\"})",
+                        "instant": true,
+                        "range": false,
+                        "format": "table"
+                      }
+                    },
+                    "refId": "D",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (go_config_gogc_percent{job=\"flowrensic\"})",
+                        "instant": true,
+                        "range": false,
+                        "format": "table"
+                      }
+                    },
+                    "refId": "E",
+                    "hidden": false
+                  }
                 }
               ],
               "transformations": [
@@ -157,19 +193,29 @@
                         "job 2": true,
                         "job 3": true,
                         "host 2": true,
-                        "host 3": true
+                        "host 3": true,
+                        "Time 4": true,
+                        "Time 5": true,
+                        "job 4": true,
+                        "job 5": true,
+                        "host 4": true,
+                        "host 5": true
                       },
                       "renameByName": {
                         "Value #A": "Up",
                         "Value #B": "CPU cores",
-                        "Value #C": "Memory"
+                        "Value #C": "Memory",
+                        "Value #D": "Go processors",
+                        "Value #E": "GOGC"
                       },
                       "indexByName": {
                         "instance": 0,
                         "host": 1,
                         "Value #A": 2,
                         "Value #B": 3,
-                        "Value #C": 4
+                        "Value #C": 4,
+                        "Value #D": 5,
+                        "Value #E": 6
                       }
                     }
                   }
@@ -269,8 +315,8 @@
         "kind": "Panel",
         "spec": {
           "id": 4,
-          "title": "Memory used by instance",
-          "description": "Memory the Go runtime of each server holds, in bytes. Normal: up and down around a steady level. Bad: it keeps climbing and does not come back down, a leak; the memory of the container against its limit is on the sustainability dashboard. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name.",
+          "title": "Memory used against the memory limit by instance",
+          "description": "Memory the Go runtime of each server holds, in bytes, against two limits: the Go limit, GOMEMLIMIT, and the memory limit of the container. Normal: up and down around a steady level, well under the limits. Bad: it keeps climbing and does not come back down, a leak, or it comes close to a limit; at the container limit the server is killed. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name. No Go limit line when GOMEMLIMIT is not set, and no container line when the server runs with no memory limit.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -289,6 +335,38 @@
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (go_memory_limit_bytes{job=\"flowrensic\"})",
+                        "legendFormat": "{{instance}} Go limit"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "max by (instance) (flowrensic_memory_limit_bytes)",
+                        "legendFormat": "{{instance}} container limit"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -477,8 +555,8 @@
         "kind": "Panel",
         "spec": {
           "id": 8,
-          "title": "Response latency p95 by instance",
-          "description": "The time in seconds in which 95% of the API calls of each server were answered, over the last few minutes. It counts the calls of the API only, not the pages of the UI or the history downloads. Normal: well under 1 second, the request time limit by default; the limit is drawn for each kind of request on the sustainability dashboard. Bad: a line that climbs or stays high. No data when there was no API call in that time.",
+          "title": "Response latency p50, p95, p99 by instance",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of the API calls of each server were answered, over the last few minutes. It counts the calls of the API only, not the pages of the UI or the history downloads. Normal: well under 1 second, the request time limit by default; the limit is drawn for each kind of request on the sustainability dashboard. Bad: a line that climbs or stays high. No data when there was no API call in that time.",
           "links": [],
           "data": {
             "kind": "QueryGroup",
@@ -492,11 +570,43 @@
                       "group": "",
                       "version": "v0",
                       "spec": {
-                        "expr": "histogram_quantile(0.95, sum by (le, instance) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
-                        "legendFormat": "{{instance}}"
+                        "expr": "histogram_quantile(0.5, sum by (le, instance) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50 {{instance}}"
                       }
                     },
                     "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.95, sum by (le, instance) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p95 {{instance}}"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le, instance) (rate(flowrensic_rpc_request_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99 {{instance}}"
+                      }
+                    },
+                    "refId": "C",
                     "hidden": false
                   }
                 }
@@ -982,6 +1092,701 @@
             }
           }
         }
+      },
+      "panel-19": {
+        "kind": "Panel",
+        "spec": {
+          "id": 19,
+          "title": "Ephemeral run clocks by instance",
+          "description": "How many ephemeral runs the clock of each server holds an entry for, a count. Normal: up and down with the ephemeral runs in flight. Bad: a line that keeps climbing and does not come back down, entries that are never let go. No data when Prometheus does not scrape the servers.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance) (flowrensic_ephemeral_run_clock_entries)",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-20": {
+        "kind": "Panel",
+        "spec": {
+          "id": 20,
+          "title": "Memory allocated per second by instance",
+          "description": "Bytes the Go runtime of each server allocates on the heap per second. Normal: it follows the load. Bad: it climbs while the load does not, more garbage for the collector. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance) (rate(go_memory_allocated_bytes_total{job=\"flowrensic\"}[$__rate_interval]))",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "Bps"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-21": {
+        "kind": "Panel",
+        "spec": {
+          "id": 21,
+          "title": "Allocations per second by instance",
+          "description": "Heap allocations the Go runtime of each server makes per second, a count. Normal: it follows the load. Bad: it climbs while the load does not. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance) (rate(go_memory_allocations_total{job=\"flowrensic\"}[$__rate_interval]))",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-22": {
+        "kind": "Panel",
+        "spec": {
+          "id": 22,
+          "title": "Garbage collections per second by instance",
+          "description": "How many times per second the Go runtime of each server collected garbage. Normal: a few a second or less. Bad: many a second, the server spends its CPU on collecting; look at the memory allocated. No data when Prometheus does not scrape the servers.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance) (rate(flowrensic_go_gc_cycles_total[$__rate_interval]))",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-23": {
+        "kind": "Panel",
+        "spec": {
+          "id": 23,
+          "title": "Heap goal by instance",
+          "description": "The heap size in bytes at which the Go runtime of each server starts its next garbage collection. Normal: steady, above the memory in use. Bad: close to the memory limit. No data when Prometheus does not scrape the server under the job name flowrensic, since the Go numbers are read with that job name.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (instance) (go_memory_gc_goal_bytes{job=\"flowrensic\"})",
+                        "legendFormat": "{{instance}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "bytes"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-24": {
+        "kind": "Panel",
+        "spec": {
+          "id": 24,
+          "title": "History files read per second",
+          "description": "History files read from the blob storage per second: one line for each call that asked for them, background for the jobs, and one line for the analysis. Normal: low, a list or a count never reads a history file. Bad: a line for a list call, or reads that climb with the stored data. No data when Prometheus does not scrape the servers.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (procedure) (rate(flowrensic_history_reads_total[$__rate_interval]))",
+                        "legendFormat": "{{procedure}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum(rate(flowrensic_analyzer_history_reads_total[$__rate_interval]))",
+                        "legendFormat": "analysis"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-25": {
+        "kind": "Panel",
+        "spec": {
+          "id": 25,
+          "title": "History bytes written per second",
+          "description": "Bytes of history written to the blob storage per second, before compression. Normal: it follows the runs that close. Bad: 0 while runs close, or far above History bytes per second on the storage and ingest dashboard. No data when Prometheus does not scrape the servers.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum(rate(flowrensic_history_written_bytes_total[$__rate_interval]))",
+                        "legendFormat": "written"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "Bps"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-26": {
+        "kind": "Panel",
+        "spec": {
+          "id": 26,
+          "title": "",
+          "description": "The queries the servers send to the database. Each query is named by the name of the query, or by the Go function that runs it when it has none. The whole section has no data when Prometheus gets no metrics from the servers.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "text",
+            "version": "",
+            "spec": {
+              "options": {
+                "mode": "markdown",
+                "content": "## Database\nHow long the queries of the servers take, and how often a query waits for a connection."
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-27": {
+        "kind": "Panel",
+        "spec": {
+          "id": 27,
+          "title": "Query time p50, p95, p99",
+          "description": "Three lines, p50, p95 and p99: the time in seconds in which half, 95% and 99% of all queries finished, over the last few minutes, all servers together. Normal: p95 well under 0.1 seconds. Bad: p95 or p99 near a second, the screens and the jobs slow down; the ten slowest queries say which. No data while no query ran in that time.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le) (rate(flowrensic_db_query_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p50"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.95, sum by (le) (rate(flowrensic_db_query_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p95"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le) (rate(flowrensic_db_query_duration_seconds_bucket[$__rate_interval])))",
+                        "legendFormat": "p99"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "s"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-28": {
+        "kind": "Panel",
+        "spec": {
+          "id": 28,
+          "title": "Queries per second by query name",
+          "description": "Queries per second of each name, all servers together. Normal: steady for each name. Bad: a name that climbs with the stored data and not with the load. No data while no query ran in that time.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (query) (rate(flowrensic_db_query_duration_seconds_count[$__rate_interval]))",
+                        "legendFormat": "{{query}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-29": {
+        "kind": "Panel",
+        "spec": {
+          "id": 29,
+          "title": "Ten slowest queries by p95",
+          "description": "The ten queries with the highest p95 over the selected period, with their p50, p95 and p99 in seconds. Normal: all under 0.1 seconds. Bad: a query near a second or over it; it is the first one to look at. No data while no query ran in the period.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.5, sum by (le, query) (rate(flowrensic_db_query_duration_seconds_bucket[$__range]))) and on(query) topk(10, histogram_quantile(0.95, sum by (le, query) (rate(flowrensic_db_query_duration_seconds_bucket[$__range]))))",
+                        "instant": true,
+                        "range": false,
+                        "format": "table"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.95, sum by (le, query) (rate(flowrensic_db_query_duration_seconds_bucket[$__range]))) and on(query) topk(10, histogram_quantile(0.95, sum by (le, query) (rate(flowrensic_db_query_duration_seconds_bucket[$__range]))))",
+                        "instant": true,
+                        "range": false,
+                        "format": "table"
+                      }
+                    },
+                    "refId": "B",
+                    "hidden": false
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "histogram_quantile(0.99, sum by (le, query) (rate(flowrensic_db_query_duration_seconds_bucket[$__range]))) and on(query) topk(10, histogram_quantile(0.95, sum by (le, query) (rate(flowrensic_db_query_duration_seconds_bucket[$__range]))))",
+                        "instant": true,
+                        "range": false,
+                        "format": "table"
+                      }
+                    },
+                    "refId": "C",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [
+                {
+                  "kind": "joinByField",
+                  "spec": {
+                    "id": "joinByField",
+                    "options": {
+                      "byField": "query",
+                      "mode": "outer"
+                    }
+                  }
+                },
+                {
+                  "kind": "organize",
+                  "spec": {
+                    "id": "organize",
+                    "options": {
+                      "excludeByName": {
+                        "Time": true,
+                        "Time 1": true,
+                        "Time 2": true,
+                        "Time 3": true
+                      },
+                      "renameByName": {
+                        "query": "Query",
+                        "Value #A": "p50",
+                        "Value #B": "p95",
+                        "Value #C": "p99"
+                      },
+                      "indexByName": {
+                        "query": 0,
+                        "Value #A": 1,
+                        "Value #B": 2,
+                        "Value #C": 3
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "sortBy",
+                  "spec": {
+                    "id": "sortBy",
+                    "options": {
+                      "sort": [
+                        {
+                          "field": "p95",
+                          "desc": true
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "s"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-30": {
+        "kind": "Panel",
+        "spec": {
+          "id": 30,
+          "title": "Waits for a database connection per second by pool",
+          "description": "Times per second a query waited for a free connection of the pool of its server, by pool, all servers together. Normal: 0 or near it. Bad: often above 0, the pool is too small for the work; the time waited is on the sustainability dashboard. No data when Prometheus does not scrape the servers.",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "",
+                      "version": "v0",
+                      "spec": {
+                        "expr": "sum by (pool) (rate(flowrensic_db_pool_waits_total[$__rate_interval]))",
+                        "legendFormat": "{{pool}}"
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "timeseries",
+            "version": "",
+            "spec": {
+              "options": {},
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ops"
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
       }
     },
     "layout": {
@@ -1135,7 +1940,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 45,
+              "y": 59,
               "width": 24,
               "height": 3,
               "element": {
@@ -1148,7 +1953,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 48,
+              "y": 62,
               "width": 12,
               "height": 5,
               "element": {
@@ -1161,7 +1966,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 12,
-              "y": 48,
+              "y": 62,
               "width": 12,
               "height": 5,
               "element": {
@@ -1174,7 +1979,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 53,
+              "y": 67,
               "width": 12,
               "height": 5,
               "element": {
@@ -1187,7 +1992,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 12,
-              "y": 53,
+              "y": 67,
               "width": 12,
               "height": 5,
               "element": {
@@ -1200,7 +2005,7 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 0,
-              "y": 58,
+              "y": 72,
               "width": 12,
               "height": 5,
               "element": {
@@ -1213,12 +2018,168 @@
             "kind": "GridLayoutItem",
             "spec": {
               "x": 12,
-              "y": 58,
+              "y": 72,
               "width": 12,
               "height": 5,
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-18"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 38,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-19"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 45,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-20"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 45,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-21"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 52,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-22"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 52,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-23"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 77,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-24"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 77,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-25"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 84,
+              "width": 24,
+              "height": 3,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-26"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 87,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-27"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 87,
+              "width": 12,
+              "height": 7,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-28"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 94,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-29"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 12,
+              "y": 94,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-30"
               }
             }
           }
